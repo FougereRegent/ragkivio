@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Ragkivio.Application/Ragkivio.Application.csproj" />
+  <Project Path="Ragkivio.Domain/Ragkivio.Domain.csproj" />
+  <Project Path="Ragkivio.Graphql/Ragkivio.Graphql.csproj" />
+  <Project Path="Ragkivio.Infrastructure/Ragkivio.Infrastructure.csproj" />
+  <Project Path="Ragkivio.Persistence/Ragkivio.Persistence.csproj" />
+</Solution>
