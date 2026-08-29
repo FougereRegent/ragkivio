@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "https": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "https://ragkivio.aspire.dev.localhost:17168;http://ragkivio.aspire.dev.localhost:15264",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DOTNET_ENVIRONMENT": "Development",
+        "ASPIRE_DASHBOARD_OTLP_ENDPOINT_URL": "https://ragkivio.aspire.dev.localhost:21077",
+        "ASPIRE_RESOURCE_SERVICE_ENDPOINT_URL": "https://ragkivio.aspire.dev.localhost:22186"
+      }
+    },
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "http://ragkivio.aspire.dev.localhost:15264",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DOTNET_ENVIRONMENT": "Development",
+        "ASPIRE_DASHBOARD_OTLP_ENDPOINT_URL": "http://ragkivio.aspire.dev.localhost:19286",
+        "ASPIRE_RESOURCE_SERVICE_ENDPOINT_URL": "http://ragkivio.aspire.dev.localhost:20006",
+        "ASPIRE_ALLOW_UNSECURED_TRANSPORT": "true"
+      }
+    }
+  }
+}

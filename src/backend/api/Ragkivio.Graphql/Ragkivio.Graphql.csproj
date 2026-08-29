@@ -1,23 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <LangVersion>preview</LangVersion>
-  </PropertyGroup>
-
-  <ItemGroup Condition="'$(ImplicitUsings)' == 'enable'">
-    <Using Include="Ragkivio.Graphql" />
-  </ItemGroup>
-
   <ItemGroup>
-    <PackageReference Include="HotChocolate.AspNetCore" Version="16.6.2" />
-    <PackageReference Include="HotChocolate.AspNetCore.CommandLine" Version="16.6.2" />
-    <PackageReference Include="HotChocolate.Types.Analyzers" Version="16.6.2">
+    <PackageReference Include="HotChocolate.AspNetCore" />
+    <PackageReference Include="HotChocolate.AspNetCore.CommandLine" />
+    <PackageReference Include="HotChocolate.Types.Analyzers">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ragkivio.Application\Ragkivio.Application.csproj" />
+    <ProjectReference Include="..\Ragkivio.Infrastructure\Ragkivio.Infrastructure.csproj" />
+    <ProjectReference Include="..\Ragkivio.Persistence\Ragkivio.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
