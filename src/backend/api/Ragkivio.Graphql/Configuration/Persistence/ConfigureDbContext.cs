@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Ragkivio.Graphql.Options;
-using Ragkivio.Persistence.Configuration;
+using Ragkivio.Persistence;
 
 namespace Ragkivio.Graphql.Configuration.Persistence;
 

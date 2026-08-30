@@ -1,12 +1,13 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Ragkivio.Persistence.Entities;
 using Ragkivio.Persistence.Interceptors;
 
-namespace Ragkivio.Persistence.Configuration;
+namespace Ragkivio.Persistence;
 
 public class RagkivioContext : DbContext
 {
-    public RagkivioContext(DbContextOptions options) : base(options)
+    public RagkivioContext(DbContextOptions<RagkivioContext> options) : base(options)
     {
     }
 
@@ -23,7 +24,11 @@ public class RagkivioContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql();
+        if (!optionsBuilder.Options.Extensions.OfType<RelationalOptionsExtension>().Any())
+        {
+            optionsBuilder.UseNpgsql();
+        }
+
         optionsBuilder.AddInterceptors([
                 new SoftDeleteInterceptor(),
                 new CreateUpdateInterceptor(),
