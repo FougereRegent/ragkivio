@@ -7,9 +7,9 @@ var postgres = builder.AddPostgres("postgres")
                         {
                             opts.WithEndpoint("http", endpoint => endpoint.Port = 8085);
                         })
-                        .WithDataVolume("markivio-db");
+                        .WithDataVolume("ragkivio-db");
 
-var db = postgres.AddDatabase("markivio");
+var db = postgres.AddDatabase("ragkivio");
 
 var username = builder.AddParameter("username", secret: true);
 var password = builder.AddParameter("password", secret: true);
@@ -23,11 +23,11 @@ var graphqlApi = builder.AddProject<Projects.Ragkivio_Graphql>("graphql-api")
                     .WaitFor(rabbitmq)
                     .WithReference(db)
                     .WithReference(rabbitmq)
-                    .WithEnvironment("MARKIVIO_AUTHORITY", env["MARKIVIO_AUTHORITY"])
-                    .WithEnvironment("MARKIVIO_AUDIENCE", env["MARKIVIO_AUDIENCE"])
-                    .WithEnvironment("MARKIVIO_AUTH_ID", env["MARKIVIO_AUTH_CLIENT_ID"])
-                    .WithEnvironment("MARKIVIO_AUTH_DOMAIN", env["MARKIVIO_AUTH_DOMAIN"])
-                    .WithEnvironment("MARKIVIO_AUTH_AUDIENCE", env["MARKIVIO_AUTH_AUDIENCE"])
+                    .WithEnvironment("RAGKIVIO_AUTHORITY", env["RAGKIVIO_AUTHORITY"])
+                    .WithEnvironment("RAGKIVIO_AUDIENCE", env["RAGKIVIO_AUDIENCE"])
+                    .WithEnvironment("RAGKIVIO_AUTH_ID", env["RAGKIVIO_AUTH_CLIENT_ID"])
+                    .WithEnvironment("RAGKIVIO_AUTH_DOMAIN", env["RAGKIVIO_AUTH_DOMAIN"])
+                    .WithEnvironment("RAGKIVIO_AUTH_AUDIENCE", env["RAGKIVIO_AUTH_AUDIENCE"])
                     .WithEnvironment(context =>
                     {
                         context.EnvironmentVariables["RABBIT_MQ__USER"] = rabbitmq.Resource.UserNameParameter!;
