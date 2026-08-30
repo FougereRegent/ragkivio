@@ -16,19 +16,20 @@ public class RagkivioContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(RagkivioContext).Assembly);
         ConfigureEntities(modelBuilder);
+        base.OnModelCreating(modelBuilder);
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        base.OnConfiguring(optionsBuilder);
         optionsBuilder.UseNpgsql();
         optionsBuilder.AddInterceptors([
                 new SoftDeleteInterceptor(),
                 new CreateUpdateInterceptor(),
         ]);
+
+        base.OnConfiguring(optionsBuilder);
     }
 
 
