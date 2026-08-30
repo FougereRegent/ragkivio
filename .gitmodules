@@ -1,0 +1,3 @@
+[submodule "ragkivio-front"]
+	path = src/frontend/ragivio-web
+	url = git@github.com:FougereRegent/ragkivio-front.git
