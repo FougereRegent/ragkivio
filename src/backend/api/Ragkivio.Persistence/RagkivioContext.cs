@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Ragkivio.Persistence.Entities;
+using Ragkivio.Persistence.Interceptors;
 
 namespace Ragkivio.Persistence.Configuration;
 
@@ -13,21 +14,27 @@ public class RagkivioContext : DbContext
     {
     }
 
-    public override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(RagkivioContext).Assembly);
     }
 
-    public override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
+        optionsBuilder.AddInterceptors([
+                new CreateUpdateInterceptor(),
+        ])
     }
 
 
-    private static void ConfigureEntities(this ModelBuilder modelBuilder) {
-        foreach(var entity in modelBuilder.Model.GetEntityTypes()) {
-            if(typeof(Entity).IsAssignableFrom(entity.ClrType)) {
+    private static void ConfigureEntities(this ModelBuilder modelBuilder)
+    {
+        foreach (var entity in modelBuilder.Model.GetEntityTypes())
+        {
+            if (typeof(Entity).IsAssignableFrom(entity.ClrType))
+            {
                 var idProperty = entity.FindProperty(nameof(Entity.Id));
                 idProperty?.SetColumnName("id");
                 idProperty?.SetColumnOrder(1);
@@ -39,7 +46,8 @@ public class RagkivioContext : DbContext
                     .SetColumnName("updated_at");
             }
 
-            if(typeof(EntityWithTenancy).IsAssignableFrom(entity.ClrType)) {
+            if (typeof(EntityWithTenancy).IsAssignableFrom(entity.ClrType))
+            {
                 entity.FindProperty(nameof(EntityWithTenancy.TenantId))?
                     .SetColumnName("tenant_id");
                 entity.FindProperty(nameof(EntityWithTenancy.TenantId))?
