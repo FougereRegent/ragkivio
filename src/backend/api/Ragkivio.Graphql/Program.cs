@@ -1,6 +1,11 @@
+using Ragkivio.Graphql.Configuration.Presentation;
+using Ragkivio.Graphql.Configuration.Options;
+
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddGraphQL();
+builder.Services
+    .AddOptionPattern()
+    .AddPresentation();
 
 var app = builder.Build();
 
