@@ -6,8 +6,17 @@ namespace Ragkivio.Persistence.Configuration;
 
 public class UserConfiguration : IEntityTypeConfiguration<User>
 {
-    public void Configure(EntityTypeBuilder<User> builder)
+    void IEntityTypeConfiguration<User>.Configure(EntityTypeBuilder<User> builder)
     {
         builder.ToTable("users");
+        builder.Property(pre => pre.Email)
+            .HasColumnName("email")
+            .HasDefaultValue("");
+        builder.Property(pre => pre.FirstName)
+            .HasColumnName("first_name")
+            .HasDefaultValue("");
+        builder.Property(pre => pre.LastName)
+            .HasColumnName("last_name")
+            .HasDefaultValue("");
     }
 }

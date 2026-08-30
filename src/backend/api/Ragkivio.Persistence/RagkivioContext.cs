@@ -18,18 +18,21 @@ public class RagkivioContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(RagkivioContext).Assembly);
+        ConfigureEntities(modelBuilder);
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
+        optionsBuilder.UseNpgsql();
         optionsBuilder.AddInterceptors([
+                new SoftDeleteInterceptor(),
                 new CreateUpdateInterceptor(),
-        ])
+        ]);
     }
 
 
-    private static void ConfigureEntities(this ModelBuilder modelBuilder)
+    private static void ConfigureEntities(ModelBuilder modelBuilder)
     {
         foreach (var entity in modelBuilder.Model.GetEntityTypes())
         {
