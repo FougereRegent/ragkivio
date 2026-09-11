@@ -9,7 +9,7 @@ public static class PersistenceConfiguration
 {
     extension(IServiceCollection services)
     {
-        public IServiceCollection AddPersistence(IConfiguration config)
+        public IServiceCollection AddPersistence()
         {
             services.AddDbContext<RagkivioContext>(static (services, options) =>
             {

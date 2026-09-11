@@ -4,8 +4,8 @@ namespace Ragkivio.Graphql.Options;
 
 public class DatabaseOption
 {
-    public const string SectionName = "DB";
+    public const string SectionName = "ConnectionStrings";
 
-    [Required, ConfigurationKeyName("CONNECTION_STRING")]
+    [Required, ConfigurationKeyName("ragkivio")]
     public string ConnectionString { get; set; } = string.Empty;
 }

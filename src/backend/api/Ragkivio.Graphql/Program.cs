@@ -1,13 +1,31 @@
-using Ragkivio.Graphql.Configuration.Presentation;
-using Ragkivio.Graphql.Configuration.Options;
+using Microsoft.EntityFrameworkCore;
+using Ragkivio.Graphql.Configuration;
+using Ragkivio.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-    .AddOptionPattern()
-    .AddPresentation();
+    .AddConfig();
 
 var app = builder.Build();
 
+if(ShouldRunMigration(app.Environment)) {
+    var cancellationTokenSource = new CancellationTokenSource();
+    cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(30));
+    await RunMigrationAsync(cancellationTokenSource.Token);
+}
+
 app.MapGraphQL();
 app.RunWithGraphQLCommands(args);
+
+
+async Task RunMigrationAsync(CancellationToken cancellationToken = default)
+{
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<RagkivioContext>();
+    await dbContext.Database.MigrateAsync(cancellationToken);
+}
+
+bool ShouldRunMigration(IWebHostEnvironment env) {
+    return env.IsDevelopment();
+}
