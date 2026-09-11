@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Ragkivio.Persistence.Entities;
+using Ragkivio.Persistence.Common.Entities;
 
-namespace Ragkivio.Persistence.Interceptors;
+namespace Ragkivio.Persistence.Common.Interceptors;
 
 public class CreateUpdateInterceptor : ISaveChangesInterceptor
 {

@@ -1,4 +1,4 @@
-namespace Ragkivio.Persistence.Entities;
+namespace Ragkivio.Persistence.Common.Entities;
 
 internal class EntityWithTenancy : Entity
 {

@@ -1,14 +1,13 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Ragkivio.Persistence.Entities;
-using Ragkivio.Persistence.Interceptors;
+using Ragkivio.Persistence.Common.Entities;
+using Ragkivio.Persistence.Common.Interceptors;
 
 namespace Ragkivio.Persistence;
 
 public class RagkivioContext : DbContext
 {
 
-    internal DbSet<Persistence.Entities.User> Users { get; set; }
+    internal DbSet<Persistence.User.User> Users { get; set; }
 
     public RagkivioContext(DbContextOptions<RagkivioContext> options) : base(options)
     {

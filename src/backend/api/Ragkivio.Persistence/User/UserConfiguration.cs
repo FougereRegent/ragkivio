@@ -1,8 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Ragkivio.Persistence.Entities;
 
-namespace Ragkivio.Persistence.Configuration;
+namespace Ragkivio.Persistence.User;
 
 public class UserConfiguration : IEntityTypeConfiguration<User>
 {

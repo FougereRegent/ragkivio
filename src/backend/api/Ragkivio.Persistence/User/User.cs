@@ -1,6 +1,7 @@
+using Ragkivio.Persistence.Common.Entities;
 using System.Text.Json;
 
-namespace Ragkivio.Persistence.Entities;
+namespace Ragkivio.Persistence.User;
 
 internal class User : Entity
 {
