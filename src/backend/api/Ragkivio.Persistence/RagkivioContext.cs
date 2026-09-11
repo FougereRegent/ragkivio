@@ -7,6 +7,9 @@ namespace Ragkivio.Persistence;
 
 public class RagkivioContext : DbContext
 {
+
+    internal DbSet<Persistence.Entities.User> Users { get; set; }
+
     public RagkivioContext(DbContextOptions<RagkivioContext> options) : base(options)
     {
     }
@@ -24,10 +27,8 @@ public class RagkivioContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        if (!optionsBuilder.Options.Extensions.OfType<RelationalOptionsExtension>().Any())
-        {
-            optionsBuilder.UseNpgsql();
-        }
+        optionsBuilder.UseNpgsql()
+            .UseLowerCaseNamingConvention();
 
         optionsBuilder.AddInterceptors([
                 new SoftDeleteInterceptor(),

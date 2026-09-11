@@ -45,7 +45,8 @@ namespace Ragkivio.Persistence.Migrations
                         .HasColumnName("created_at");
 
                     b.Property<DateTimeOffset?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deletedat");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -58,7 +59,8 @@ namespace Ragkivio.Persistence.Migrations
                         .HasColumnName("first_name");
 
                     b.Property<bool>("IsDelete")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("isdelete");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -77,7 +79,8 @@ namespace Ragkivio.Persistence.Migrations
                         .HasName("id");
 
                     b.HasIndex("Email")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_users_email");
 
                     b.ToTable("users", (string)null);
                 });

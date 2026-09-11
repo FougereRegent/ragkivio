@@ -3,6 +3,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 var env = builder.Configuration.GetSection("environmentVariables");
 
 var postgres = builder.AddPostgres("postgres")
+                        .WithImageTag("18")
                         .WithPgAdmin(configureContainer: opts =>
                         {
                             opts.WithEndpoint("http", endpoint => endpoint.Port = 8085);
@@ -35,6 +36,7 @@ var graphqlApi = builder.AddProject<Projects.Ragkivio_Graphql>("graphql-api")
                         context.EnvironmentVariables["RABBIT_MQ__PASSWORD"] = rabbitmq.Resource.PasswordParameter!;
                         context.EnvironmentVariables["RABBIT_MQ__HOST"] = rabbitmq.Resource.PrimaryEndpoint.Property(EndpointProperty.Host);
                         context.EnvironmentVariables["RABBIT_MQ__PORT"] = rabbitmq.Resource.PrimaryEndpoint.Property(EndpointProperty.Port);
+                        context.EnvironmentVariables["ConnectionStrings__ragkivio"] = db.Resource.ConnectionStringExpression;
                     })
                     .WithUrl("/scalar")
                     .WithUrl("/graphql");

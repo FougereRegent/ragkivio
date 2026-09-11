@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
+    <PackageReference Include="EFCore.NamingConventions" />
     <PackageReference Include="FluentResults" />
     <PackageReference Include="GreenDonut.Data.EntityFramework" />
     <PackageReference Include="HotChocolate.AspNetCore" />

@@ -11,7 +11,9 @@ public static class OptionsConfiguration
             services.AddOptions<AuthOption>()
                 .BindConfiguration(AuthOption.SectionName);
         services.AddOptions<DatabaseOption>()
-                .BindConfiguration(DatabaseOption.SectionName);
+                .BindConfiguration(DatabaseOption.SectionName)
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
             return services;
         }
     }
