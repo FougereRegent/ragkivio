@@ -9,13 +9,20 @@ builder.Services
 
 var app = builder.Build();
 
-if(ShouldRunMigration(app.Environment)) {
+if (ShouldRunMigration(app.Environment))
+{
     var cancellationTokenSource = new CancellationTokenSource();
     cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(30));
     await RunMigrationAsync(cancellationTokenSource.Token);
 }
 
-app.MapGraphQL();
+app.UseRouting();
+app.UseAuthentication();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapGraphQL();
+});
 app.RunWithGraphQLCommands(args);
 
 
@@ -26,6 +33,7 @@ async Task RunMigrationAsync(CancellationToken cancellationToken = default)
     await dbContext.Database.MigrateAsync(cancellationToken);
 }
 
-bool ShouldRunMigration(IWebHostEnvironment env) {
+bool ShouldRunMigration(IWebHostEnvironment env)
+{
     return env.IsDevelopment();
 }

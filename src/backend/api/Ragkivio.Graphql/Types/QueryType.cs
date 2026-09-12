@@ -21,6 +21,7 @@ public class QueryType : ObjectType<Query>
 
     protected override void Configure(IObjectTypeDescriptor<Query> descriptor)
     {
+        descriptor.Authorize();
         descriptor.Field(pre => pre.GetBook())
             .Type<BookType>();
     }
