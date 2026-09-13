@@ -8,7 +8,8 @@ public static class UserConfiguration
     {
         public IServiceCollection AddUserApplication() 
         {
-            services.AddScoped<IUserProvider, UserProvider>
+            services.AddScoped<IUserProvider, UserProvider>()
+                .AddTransient<RegisterUserUseCase>();
             return services;
         }
     }
