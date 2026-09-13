@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Ragkivio.Domain.User;
 using UserDomain = Ragkivio.Domain.User.User;
 using UserPersistence = Ragkivio.Persistence.User.User;
 
@@ -50,7 +51,7 @@ public sealed class UserRepository : IUserRepository
         var users = entities.Select(pre => new UserPersistence())
             .ToList();
         await _dbContext.Users.AddRangeAsync(users, token);
-        return users.Select(pre => new)
+        return users.Select(pre => new UserDomain());
     }
 
     public async Task UpdateAsync(UserDomain entity, CancellationToken token = default)

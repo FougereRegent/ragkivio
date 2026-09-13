@@ -25,6 +25,7 @@
     <ProjectReference Include="..\Ragkivio.Application\Ragkivio.Application.csproj" />
     <ProjectReference Include="..\Ragkivio.Infrastructure\Ragkivio.Infrastructure.csproj" />
     <ProjectReference Include="..\Ragkivio.Persistence\Ragkivio.Persistence.csproj" />
+    <ProjectReference Include="..\Ragkivio.Domain\Ragkivio.Domain.csproj" />
   </ItemGroup>
 
 </Project>

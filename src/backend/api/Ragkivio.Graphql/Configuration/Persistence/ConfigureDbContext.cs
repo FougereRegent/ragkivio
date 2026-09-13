@@ -3,6 +3,8 @@ using Microsoft.Extensions.Options;
 using Ragkivio.Graphql.Options;
 using Ragkivio.Persistence;
 using EFCore.NamingConventions;
+using Ragkivio.Persistence.User;
+using Ragkivio.Domain.User;
 
 namespace Ragkivio.Graphql.Configuration.Persistence;
 
@@ -18,6 +20,8 @@ public static class PersistenceConfiguration
                 options.UseNpgsql(optionDatabase.Value.ConnectionString)
                     .UseLowerCaseNamingConvention();
             });
+
+            services.AddTransient<IUserRepository, UserRepository>();
             return services;
         }
     }

@@ -13,13 +13,13 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(pre => pre.Email)
             .HasColumnName("email")
-            .IsRequired(true);
+            .IsRequired(false);
         builder.Property(pre => pre.FirstName)
             .HasColumnName("first_name")
-            .IsRequired(true);
+            .IsRequired(false);
         builder.Property(pre => pre.LastName)
             .HasColumnName("last_name")
-            .IsRequired(true);
+            .IsRequired(false);
         builder.Property(pre => pre.AuthId)
             .HasColumnName("auth_id")
             .IsRequired(false)
@@ -32,7 +32,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasColumnType("jsonb")
             .HasColumnName("config");
 
-        builder.HasIndex(pre => pre.Email)
+        builder.Property(pre => pre.BirthDate)
+            .IsRequired(false)
+            .HasColumnName("birth_date");
+
+        builder.HasIndex(pre => new {pre.Email, pre.AuthId})
             .IsUnique();
     }
 }

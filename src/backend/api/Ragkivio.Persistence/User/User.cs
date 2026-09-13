@@ -10,6 +10,7 @@ internal class User : Entity
     public string Email { get; set; } = string.Empty;
     public string? AuthId { get; set; } = null;
     public string? PhoneNumber { get; set; } = string.Empty;
+    public DateOnly BirthDate { get; set; } = DateOnly.MinValue;
 
     public JsonElement? Config { get; set; } = null!;
 }
