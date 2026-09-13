@@ -1,3 +1,4 @@
+using Ragkivio.Application.User;
 using Ragkivio.Application.User.Services;
 
 namespace Ragkivio.Graphql.Configuration.Application.User;

@@ -33,8 +33,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasColumnName("config");
 
         builder.Property(pre => pre.BirthDate)
-            .IsRequired(false)
-            .HasColumnName("birth_date");
+            .HasColumnName("birth_date")
+            .HasDefaultValue(DateOnly.MinValue);
 
         builder.HasIndex(pre => new {pre.Email, pre.AuthId})
             .IsUnique();

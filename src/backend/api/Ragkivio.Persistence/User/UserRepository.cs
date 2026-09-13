@@ -40,6 +40,14 @@ public sealed class UserRepository : IUserRepository
             .FirstOrDefaultAsync(pre => pre.Id == id, token);
     }
 
+    public async Task<UserDomain?> GetUserByAuthIdAsync(string authId, CancellationToken token = default)
+    {
+        return await _dbContext.Users
+            .Where(pre => pre.AuthId == authId)
+            .ProjectToDomain()
+            .FirstOrDefaultAsync(token);
+    }
+
     public async Task<UserDomain> SaveAsync(UserDomain entity, CancellationToken token = default)
     {
         await _dbContext.Users.AddAsync(new UserPersistence(), token);
