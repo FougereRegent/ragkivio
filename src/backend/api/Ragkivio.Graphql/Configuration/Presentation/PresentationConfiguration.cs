@@ -27,6 +27,7 @@ public static class PresentationConfiguration
                 .AddFiltering()
                 .AddSorting();
 
+            services.AddHttpContextAccessor();
             services.AddHealthChecks();
             return services;
         }

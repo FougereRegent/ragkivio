@@ -51,6 +51,7 @@ public sealed class UserRepository : IUserRepository
     public async Task<UserDomain> SaveAsync(UserDomain entity, CancellationToken token = default)
     {
         await _dbContext.Users.AddAsync(new UserPersistence(), token);
+        await _dbContext.SaveChangesAsync(token);
         return entity;
     }
 
@@ -59,6 +60,8 @@ public sealed class UserRepository : IUserRepository
         var users = entities.Select(pre => new UserPersistence())
             .ToList();
         await _dbContext.Users.AddRangeAsync(users, token);
+        await _dbContext.SaveChangesAsync(token);
+        
         return users.Select(pre => new UserDomain());
     }
 

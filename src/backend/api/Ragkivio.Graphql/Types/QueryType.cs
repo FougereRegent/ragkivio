@@ -1,3 +1,5 @@
+using Ragkivio.Graphql.Middleware;
+
 namespace Ragkivio.Graphql.Types;
 
 public partial class Query
@@ -22,6 +24,7 @@ public class QueryType : ObjectType<Query>
     {
         descriptor.Authorize();
         descriptor.Field(pre => pre.GetBook())
+            .Use<AuthMiddleware>()
             .Type<BookType>();
     }
 }

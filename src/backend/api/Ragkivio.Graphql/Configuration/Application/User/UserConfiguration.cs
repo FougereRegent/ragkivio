@@ -10,6 +10,7 @@ public static class UserConfiguration
         public IServiceCollection AddUserApplication() 
         {
             services.AddScoped<IUserProvider, UserProvider>()
+                .AddScoped<IUserService, UserService>()
                 .AddTransient<RegisterUserUseCase>();
             return services;
         }
