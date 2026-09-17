@@ -11,7 +11,8 @@ public static class UserConfiguration
         {
             services.AddScoped<IUserProvider, UserProvider>()
                 .AddScoped<IUserService, UserService>()
-                .AddTransient<RegisterUserUseCase>();
+                .AddTransient<RegisterUserUseCase>()
+                .AddTransient<CreateUserUseCase>();
             return services;
         }
     }

@@ -20,13 +20,14 @@ public static class PersistenceConfiguration
                 var optionDatabase = services.GetRequiredService<IOptions<DatabaseOption>>();
                 options.UseNpgsql(optionDatabase.Value.ConnectionString, opts => {
                         opts.EnableRetryOnFailure(
-                                maxRetryCount: 3,
+                                maxRetryCount: 5,
                                 maxRetryDelay: TimeSpan.FromSeconds(30),
                                 errorCodesToAdd: null
                                 );
                         })
                     .UseLowerCaseNamingConvention();
             });
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IUserRepository, UserRepository>();
             return services;

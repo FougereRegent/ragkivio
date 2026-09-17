@@ -26,7 +26,7 @@ internal sealed class AuthMiddleware
             .HttpContext;
 
         var userProvider = context.RequestServices.GetRequiredService<IUserProvider>();
-        var userService = context.RequestServices.GetRequiredService<IUserService>();
+        var createUserUseCase = context.RequestServices.GetRequiredService<CreateUserUseCase>();
 
         if (httpContext is null)
         {
@@ -41,7 +41,7 @@ internal sealed class AuthMiddleware
             var jwt = auth[prefixAuth.Length..].Trim();
             var userObject = ParseJwt(jwt);
 
-            var result = await AddOrGetUser(userObject, userProvider, userService);
+            var result = await AddOrGetUser(userObject, userProvider, createUserUseCase);
             if (result.IsFailed)
             {
                 throw new GraphQLException(
@@ -59,12 +59,12 @@ internal sealed class AuthMiddleware
         }
     }
 
-    private static async Task<Result> AddOrGetUser(UserId user, IUserProvider userProvider, IUserService userService, CancellationToken token = default)
+    private static async Task<Result> AddOrGetUser(UserId user, IUserProvider userProvider, CreateUserUseCase userUseCase, CancellationToken token = default)
     {
-        var userResult = await userService.CreateOrGetUserAsync(new CreateUserDto(user.AuthId), token);
+        var userResult = await userUseCase.HandleAsync(new CreateUserDto(user.AuthId), token);
         if (userResult.IsFailed)
         {
-            return Result.Fail("");
+            return Result.Fail(userResult.Errors);
         }
         userProvider.SetCurrentUser(userResult.Value);
 
