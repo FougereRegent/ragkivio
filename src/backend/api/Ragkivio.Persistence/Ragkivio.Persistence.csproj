@@ -12,5 +12,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ragkivio.Domain\Ragkivio.Domain.csproj" />
+    <ProjectReference Include="..\Ragkivio.Application\Ragkivio.Application.csproj" />
   </ItemGroup>
 </Project>
