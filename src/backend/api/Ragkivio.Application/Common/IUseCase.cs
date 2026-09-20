@@ -18,6 +18,14 @@ public interface IUseCaseAsync {
     Task<Result> HandleAsync(CancellationToken token = default);
 }
 
+public interface IUseCaseAsync<T> {
+    Task<Result<T>> HandleAsync(CancellationToken token = default);
+}
+
+public interface IUseCase<T> {
+    Result<T> Handle();
+}
+
 public interface IUseCase {
     Result Handle();
 }

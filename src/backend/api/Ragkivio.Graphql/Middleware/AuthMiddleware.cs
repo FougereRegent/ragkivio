@@ -66,8 +66,8 @@ internal sealed class AuthMiddleware
         {
             return Result.Fail(userResult.Errors);
         }
-        userProvider.SetCurrentUser(userResult.Value);
 
+        userProvider.SetCurrentUser(userResult.Value);
         return Result.Ok();
     }
 

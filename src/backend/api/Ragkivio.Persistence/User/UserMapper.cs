@@ -16,13 +16,18 @@ internal static partial class UserMapper
     [MapperIgnoreTarget(nameof(UserPersistence.DeletedAt))]
     public static partial UserPersistence ToPersistence(UserDomain user);
 
-    [MapperIgnoreSource(nameof(UserPersistence.AuthId))]
-    [MapperIgnoreSource(nameof(UserPersistence.IsDelete))]
-    [MapperIgnoreSource(nameof(UserPersistence.DeletedAt))]
-    [MapperIgnoreTarget(nameof(UserDomain.IsRegistered))]
+    [MapperIgnoreSource(nameof(UserPersistence.AuthId)), MapperIgnoreSource(nameof(UserPersistence.IsDelete)),
+     MapperIgnoreSource(nameof(UserPersistence.DeletedAt)), MapperIgnoreTarget(nameof(UserDomain.IsRegistered)),
+     MapProperty(nameof(UserPersistence.Id), nameof(UserDomain.Id))]
     public static partial UserDomain ToDomain(UserPersistence user);
 
     public static partial IQueryable<UserDomain> ProjectToDomain(this IQueryable<UserPersistence> query);
+
+    [MapperIgnoreSource(nameof(UserDomain.IsRegistered))]
+    [MapperIgnoreTarget(nameof(UserPersistence.AuthId))]
+    [MapperIgnoreTarget(nameof(UserPersistence.IsDelete))]
+    [MapperIgnoreTarget(nameof(UserPersistence.DeletedAt))]
+    public static partial void Hydrate(UserDomain source, UserPersistence target);
 
     [UserMapping(Default = true)]
     [MapperIgnoreSource(nameof(UserPersistence.AuthId))]

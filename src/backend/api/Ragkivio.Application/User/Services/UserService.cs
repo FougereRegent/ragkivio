@@ -12,19 +12,22 @@ public sealed class UserService(IUserRepository userRepository) : IUserService
     public async Task<Result<UserDomain>> CreateOrGetUserAsync(CreateUserDto createUser, CancellationToken token = default)
     {
         var user = await userRepository.GetUserByAuthIdAsync(createUser.AuthId, token);
-        if(user is not null) {
+        if (user is not null)
+        {
             return user;
         }
 
         UserDomain createdUser;
-        try {
+        try
+        {
             createdUser = new UserDomain();
         }
-        catch (BusinessException ex){
+        catch (BusinessException ex)
+        {
             return Result.Fail(new DomainError(nameof(UserDomain), ex.Message));
         }
 
-        await userRepository.SaveAsync(createdUser, token);
+        createdUser = await userRepository.SaveAsync(createdUser, createUser.AuthId, token) ?? createdUser;
         return createdUser;
     }
 }

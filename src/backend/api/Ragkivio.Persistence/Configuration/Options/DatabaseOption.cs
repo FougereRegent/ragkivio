@@ -1,6 +1,7 @@
+using Microsoft.Extensions.Configuration;
 using System.ComponentModel.DataAnnotations;
 
-namespace Ragkivio.Graphql.Options;
+namespace Ragkivio.Persistence.Common.Options;
 
 public class DatabaseOption
 {

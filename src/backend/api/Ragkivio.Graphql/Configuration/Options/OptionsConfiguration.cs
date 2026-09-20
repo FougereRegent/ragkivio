@@ -1,4 +1,5 @@
 using Ragkivio.Graphql.Options;
+using Ragkivio.Persistence.Configuration;
 
 namespace Ragkivio.Graphql.Configuration.Options;
 
@@ -10,10 +11,7 @@ public static class OptionsConfiguration
         {
             services.AddOptions<AuthOption>()
                 .BindConfiguration(AuthOption.SectionName);
-        services.AddOptions<DatabaseOption>()
-                .BindConfiguration(DatabaseOption.SectionName)
-                .ValidateDataAnnotations()
-                .ValidateOnStart();
+            services.AddPersistenceOption();
             return services;
         }
     }

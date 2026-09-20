@@ -1,8 +1,8 @@
 using Ragkivio.Graphql.Configuration.Application;
 using Ragkivio.Graphql.Configuration.Infrastructure;
 using Ragkivio.Graphql.Configuration.Options;
-using Ragkivio.Graphql.Configuration.Persistence;
 using Ragkivio.Graphql.Configuration.Presentation;
+using Ragkivio.Persistence.Configuration;
 
 namespace Ragkivio.Graphql.Configuration;
 

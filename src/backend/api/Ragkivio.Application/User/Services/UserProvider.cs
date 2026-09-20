@@ -5,13 +5,13 @@ namespace Ragkivio.Application.User.Services;
 
 public sealed class UserProvider : IUserProvider
 {
-    public DomainUser CurrentUser {get; private set;} = null!;
-
+    private static readonly AsyncLocal<DomainUser> AsyncLocalCurrentUser = new AsyncLocal<DomainUser>();
+    public DomainUser CurrentUser => AsyncLocalCurrentUser.Value ?? new DomainUser();
     public Guid UserId => CurrentUser?.Id ?? Guid.Empty;
 
     public void SetCurrentUser(DomainUser user)
     {
         ArgumentNullException.ThrowIfNull(user);
-        this.CurrentUser = user;
+        AsyncLocalCurrentUser.Value = user;
     }
 }

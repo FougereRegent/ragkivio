@@ -36,7 +36,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasColumnName("birth_date")
             .HasDefaultValue(DateOnly.MinValue);
 
-        builder.HasIndex(pre => new {pre.Email, pre.AuthId})
+        builder.HasIndex(pre => pre.AuthId)
             .IsUnique();
     }
 }

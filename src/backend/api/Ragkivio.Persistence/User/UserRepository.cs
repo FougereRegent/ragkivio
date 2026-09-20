@@ -1,81 +1,48 @@
-using Microsoft.EntityFrameworkCore;
 using Ragkivio.Domain.User;
+using Ragkivio.Persistence.Common;
 using UserDomain = Ragkivio.Domain.User.User;
 using UserPersistence = Ragkivio.Persistence.User.User;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ragkivio.Persistence.User;
 
-
-public sealed class UserRepository : IUserRepository
+internal sealed class UserRepository : GenericRepository<UserPersistence, UserDomain>, IUserRepository
 {
-    private readonly RagkivioContext _dbContext;
-
-    public UserRepository(RagkivioContext dbContext) {
-        this._dbContext = dbContext;
-    }
-
-    public async Task DeleteAsync(UserDomain entity, CancellationToken token = default)
-    {
-        await _dbContext.Users.Where(pre => pre.Id == entity.Id)
-            .ExecuteDeleteAsync(token);
-    }
-
-    public async Task DeleteAsync(IEnumerable<UserDomain> entities, CancellationToken token = default)
-    {
-        var ids = entities.Select(pre => pre.Id)
-            .ToList();
-
-        await _dbContext.Users.Where(pre => ids.Contains(pre.Id))
-            .ExecuteDeleteAsync(token);
-    }
-
-    public IQueryable<Domain.User.User> GetAll() => _dbContext.Users
-        .Select(pre => new Domain.User.User())
-        .AsQueryable();
-
-    public async Task<Domain.User.User?> GetByIdAsync(Guid id, CancellationToken token = default)
-    {
-        return await _dbContext.Users
-            .Select(pre => new UserDomain())
-            .FirstOrDefaultAsync(pre => pre.Id == id, token);
-    }
+    public UserRepository(RagkivioContext dbContext) : base(dbContext) {}
 
     public async Task<UserDomain?> GetUserByAuthIdAsync(string authId, CancellationToken token = default)
     {
-        return await _dbContext.Users
-            .Where(pre => pre.AuthId == authId)
-            .ProjectToDomain()
-            .FirstOrDefaultAsync(token);
+        var userPersistence = await _dbSet.FirstOrDefaultAsync(pre => pre.AuthId == authId, token);
+
+        return userPersistence is null ? null : ToDomain(userPersistence);
     }
 
-    public async Task<UserDomain> SaveAsync(UserDomain entity, CancellationToken token = default)
+    public async Task<UserDomain> SaveAsync(UserDomain entity, string authId, CancellationToken token = default)
     {
-        await _dbContext.Users.AddAsync(new UserPersistence(), token);
-        await _dbContext.SaveChangesAsync(token);
-        return entity;
+        var userPersistence = UserMapper.ToPersistence(entity);
+        userPersistence.AuthId = authId;
+        await _context.Users.AddAsync(userPersistence, token);
+        await _context.SaveChangesAsync(token);
+        return ToDomain(userPersistence);
     }
 
-    public async Task<IEnumerable<UserDomain>> SaveAsync(IEnumerable<UserDomain> entities, CancellationToken token = default)
+    private protected override void HydratePersistenceEntity(UserDomain domainEntity, UserPersistence persistenceEntity)
     {
-        var users = entities.Select(pre => new UserPersistence())
-            .ToList();
-        await _dbContext.Users.AddRangeAsync(users, token);
-        await _dbContext.SaveChangesAsync(token);
-        
-        return users.Select(pre => new UserDomain());
+        UserMapper.Hydrate(domainEntity, persistenceEntity);
     }
 
-    public async Task UpdateAsync(UserDomain entity, CancellationToken token = default)
+    private protected override IQueryable<UserDomain> ProjectionToDomain(IQueryable<UserPersistence> collection)
     {
-        var user = new UserPersistence();
-        _dbContext.Users.Update(user);
-        await _dbContext.SaveChangesAsync(token);
+        return collection.ProjectToDomain();
     }
 
-    public async Task UpdateAsync(IEnumerable<UserDomain> entities, CancellationToken token = default)
+    private protected override UserDomain ToDomain(UserPersistence entity)
     {
-        var users = entities.Select(pre => new UserPersistence());
-        _dbContext.Users.UpdateRange(users);
-        await _dbContext.SaveChangesAsync(token);
+        return UserMapper.ToDomain(entity);
+    }
+
+    private protected override UserPersistence ToPersistence(UserDomain entity)
+    {
+        return UserMapper.ToPersistence(entity);
     }
 }
