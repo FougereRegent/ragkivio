@@ -53,6 +53,10 @@ public class RagkivioContext : DbContext
                     .SetColumnName("created_at");
                 entity.FindProperty(nameof(Entity.UpdatedAt))?
                     .SetColumnName("updated_at");
+                entity.FindProperty(nameof(Entity.DeletedAt))?
+                    .SetColumnName("deleted_at");
+                entity.FindProperty(nameof(Entity.IsDelete))?
+                    .SetColumnName("is_delete");
             }
 
             if (typeof(EntityWithTenancy).IsAssignableFrom(entity.ClrType))
@@ -62,6 +66,7 @@ public class RagkivioContext : DbContext
                 entity.FindProperty(nameof(EntityWithTenancy.TenantId))?
                     .SetColumnOrder(2);
             }
+            
         }
     }
 }

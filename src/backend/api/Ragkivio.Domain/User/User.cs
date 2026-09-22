@@ -9,14 +9,14 @@ public sealed class User : Common.Entity
     private const string regexName = @"^[\p{L}]+(?:[ '-][\p{L}]+)*$";
     public string Email
     {
-        get; private set
+        get; set
         {
             const string emailRegex = @"^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$";
             if (field == value)
                 return;
 
             if (!Regex.IsMatch(value, emailRegex))
-                throw new BusinessException(nameof(Email), "");
+                throw new BusinessException(nameof(Email), "email was not valid");
 
             field = value;
 
@@ -25,13 +25,13 @@ public sealed class User : Common.Entity
 
     public string FirstName
     {
-        get; private set
+        get; set
         {
             if (field == value)
                 return;
 
             if (!Regex.IsMatch(value, regexName))
-                throw new Exception();
+                throw new BusinessException(nameof(FirstName), "firstname was not valid");
 
             field = value;
         }
@@ -45,7 +45,7 @@ public sealed class User : Common.Entity
                 return;
 
             if (!Regex.IsMatch(value, regexName))
-                throw new Exception();
+                throw new BusinessException(nameof(LastName), "lastname was not valid");
 
             field = value;
         }
@@ -62,10 +62,10 @@ public sealed class User : Common.Entity
                 return;
 
             if (!Regex.IsMatch(value, phoneNumberRegex))
-                throw new Exception();
+                throw new BusinessException(nameof(PhoneNumber), "");
         }
     } = string.Empty;
-    public bool IsRegistered { get; private set; } = false;
+    public bool IsRegistered { get; set; } = false;
 
     public DateOnly BirthDate
     {
@@ -74,6 +74,7 @@ public sealed class User : Common.Entity
 
             if (field.Equals(value))
                 return;
+
             var dateTimeProvider = new DateTimeProvider();
             var nowDateOnly = DateOnly.FromDateTime(dateTimeProvider.Now);
 
@@ -89,11 +90,12 @@ public sealed class User : Common.Entity
     public Config? Config { get; set; } = null;
 
 
-    public void RegisterUser(string firstName, string lastName, string? phoneNumber, DateOnly birthDate)
+    public void RegisterUser(string email, string firstName, string lastName, string? phoneNumber, DateOnly birthDate)
     {
         ArgumentNullException.ThrowIfNullOrEmpty(firstName);
         ArgumentNullException.ThrowIfNullOrEmpty(lastName);
 
+        this.Email = email;
         this.FirstName = firstName;
         this.LastName = lastName;
         this.PhoneNumber = phoneNumber;

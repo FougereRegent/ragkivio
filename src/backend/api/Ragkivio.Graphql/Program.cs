@@ -15,14 +15,14 @@ if (ShouldRunMigration(app.Environment))
     cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(30));
     await RunMigrationAsync(cancellationTokenSource.Token);
 }
-
 app.UseRouting();
+app.UseCors("AllowAllOrigin");
 app.UseAuthentication();
-
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapGraphQL();
 });
+
 app.RunWithGraphQLCommands(args);
 
 

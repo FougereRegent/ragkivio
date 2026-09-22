@@ -3,6 +3,7 @@
     <PackageReference Include="FluentResults" />
     <PackageReference Include="FluentValidation" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="Riok.Mapperly" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ragkivio.Domain\Ragkivio.Domain.csproj" />

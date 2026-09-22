@@ -32,6 +32,10 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasColumnType("jsonb")
             .HasColumnName("config");
 
+        builder.Property(pre => pre.IsRegistered)
+            .IsRequired(true)
+            .HasColumnName("is_registered");
+        
         builder.Property(pre => pre.BirthDate)
             .HasColumnName("birth_date")
             .HasDefaultValue(DateOnly.MinValue);

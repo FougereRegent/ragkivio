@@ -1,20 +1,15 @@
 using FluentResults;
 using Ragkivio.Application.Common;
 using Ragkivio.Application.User.Services;
+using UserDomain = Ragkivio.Domain.User.User;
 
 namespace Ragkivio.Application.User;
-using Dto;
 
-public sealed class MeUserUseCase(IUserProvider userProvider) : IUseCase<UserInformationResponse>
+public sealed class MeUserUseCase(IUserProvider userProvider) : IUseCase<UserDomain>
 {
-    public Result<UserInformationResponse> Handle()
+    public Result<UserDomain> Handle()
     {
         var currentUser = userProvider.CurrentUser;
-        return new UserInformationResponse {
-            Id = currentUser.Id,
-            Email = currentUser.Email,
-            FirstName = currentUser.FirstName,
-            LastName = currentUser.LastName,
-        };
+        return currentUser;
     }
 }

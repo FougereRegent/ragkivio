@@ -18,7 +18,12 @@ internal static partial class UserMapper
 
     [MapperIgnoreSource(nameof(UserPersistence.AuthId)), MapperIgnoreSource(nameof(UserPersistence.IsDelete)),
      MapperIgnoreSource(nameof(UserPersistence.DeletedAt)), MapperIgnoreTarget(nameof(UserDomain.IsRegistered)),
-     MapProperty(nameof(UserPersistence.Id), nameof(UserDomain.Id))]
+     MapProperty(nameof(UserPersistence.Id), nameof(UserDomain.Id)), 
+     MapProperty(nameof(UserPersistence.FirstName), nameof(UserDomain.FirstName)),
+     MapProperty(nameof(UserPersistence.LastName), nameof(UserDomain.LastName)),
+     MapProperty(nameof(UserPersistence.Email), nameof(UserPersistence.Email)),
+     MapProperty(nameof(UserPersistence.IsRegistered), nameof(UserDomain.IsRegistered)),
+    ]
     public static partial UserDomain ToDomain(UserPersistence user);
 
     public static partial IQueryable<UserDomain> ProjectToDomain(this IQueryable<UserPersistence> query);

@@ -76,11 +76,20 @@ internal abstract class GenericRepository<T_IN, T_OUT> : Domain.Common.IGenericR
         ArgumentNullException.ThrowIfNull(entityPersistence);
 
         HydratePersistenceEntity(entity, entityPersistence);
-        throw new NotImplementedException();
+        _dbSet.Update(entityPersistence);
+        await _context.SaveChangesAsync(token);
     }
 
-    public Task UpdateAsync(IEnumerable<T_OUT> entities, CancellationToken token = default)
+    public async Task UpdateAsync(IEnumerable<T_OUT> entities, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        foreach (var entity in entities)
+        {
+            var entityPersistence = await _dbSet.FindAsync(entity.Id, token);
+            ArgumentNullException.ThrowIfNull(entityPersistence);
+            HydratePersistenceEntity(entity, entityPersistence);
+            
+            _dbSet.Update(entityPersistence);
+        }
+        await _context.SaveChangesAsync(token);
     }
 }

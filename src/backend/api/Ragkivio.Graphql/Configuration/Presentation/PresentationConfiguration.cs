@@ -14,16 +14,26 @@ public static class PresentationConfiguration
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer(options=>
+            .AddJwtBearer(options =>
             {
-                options.Authority = "https://markivio.eu.auth0.com/";
-                options.Audience = "https://ragkivio-api-dev.damien-venant.ovh";
+                options.Authority = "https://ragkivio.eu.auth0.com/";
+                options.Audience = "https://graphql-ragkivio.fr";
+            });
+
+            services.AddCors(opts =>
+            {
+                opts.AddPolicy("AllowAllOrigin", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+                });
             });
 
             services.AddGraphQLServer()
                 .AddAuthorization()
                 .AddQueryType<QueryType>()
-                //.AddMutationType<MutationType>()
+                .AddMutationType<MutationType>()
                 .AddFiltering()
                 .AddSorting();
 

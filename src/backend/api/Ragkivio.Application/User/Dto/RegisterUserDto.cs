@@ -5,5 +5,5 @@ public record RegisterUserDto(
         string FirstName,
         string LastName,
         string? PhoneNumber,
-        string? AuthId = null
+        DateOnly BirthDate
         );

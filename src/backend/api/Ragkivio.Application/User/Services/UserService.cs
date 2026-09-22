@@ -1,33 +1,15 @@
 using FluentResults;
 using Ragkivio.Application.Common.Errors;
-using Ragkivio.Application.User.Dto;
-using Ragkivio.Domain.Common.Exceptions;
-using Ragkivio.Domain.User;
-using UserDomain = Ragkivio.Domain.User.User;
 
-namespace Ragkivio.Application.User;
+namespace Ragkivio.Application.User.Services;
 
-public sealed class UserService(IUserRepository userRepository) : IUserService
+public sealed class UserService(IUserProvider userProvider) : IUserService
 {
-    public async Task<Result<UserDomain>> CreateOrGetUserAsync(CreateUserDto createUser, CancellationToken token = default)
+    public Result<bool> UserRegistrationIsCompleted()
     {
-        var user = await userRepository.GetUserByAuthIdAsync(createUser.AuthId, token);
-        if (user is not null)
-        {
-            return user;
+        if(userProvider.CurrentUser is null) {
+            return Result.Fail(new NotFoundError("user", "", "current user not found"));
         }
-
-        UserDomain createdUser;
-        try
-        {
-            createdUser = new UserDomain();
-        }
-        catch (BusinessException ex)
-        {
-            return Result.Fail(new DomainError(nameof(UserDomain), ex.Message));
-        }
-
-        createdUser = await userRepository.SaveAsync(createdUser, createUser.AuthId, token) ?? createdUser;
-        return createdUser;
+        return userProvider.CurrentUser.IsRegistered;
     }
 }

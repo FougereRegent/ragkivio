@@ -22,11 +22,11 @@ internal sealed class AuthMiddleware
     public async Task InvokeAsync(IMiddlewareContext context)
     {
         const string prefixAuth = "Bearer ";
-        var httpContext = context.RequestServices.GetRequiredService<IHttpContextAccessor>()
+        var httpContext = context.Services.GetRequiredService<IHttpContextAccessor>()
             .HttpContext;
 
-        var userProvider = context.RequestServices.GetRequiredService<IUserProvider>();
-        var createUserUseCase = context.RequestServices.GetRequiredService<CreateUserUseCase>();
+        var userProvider = context.Services.GetRequiredService<IUserProvider>();
+        var createUserUseCase = context.Services.GetRequiredService<CreateUserUseCase>();
 
         if (httpContext is null)
         {
