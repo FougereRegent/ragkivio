@@ -57,3 +57,4 @@ TestResult.xml
 nunit-*.xml
 /src/backend/api/.idea/.idea.Ragkivio/.idea
 /src/backend/api/Ragkivio.sln.DotSettings.user
+/src/backend/api/Ragkivio.Aspire/appsettings.Development.json

@@ -1,7 +1,6 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
 var env = builder.Configuration.GetSection("environmentVariables");
-
 var postgres = builder.AddPostgres("postgres")
                         .WithImageTag("18")
                         .WithPgAdmin(configureContainer: opts =>
@@ -25,11 +24,9 @@ var graphqlApi = builder.AddProject<Projects.Ragkivio_Graphql>("graphql-api")
                     .WaitFor(rabbitmq)
                     .WithReference(db)
                     .WithReference(rabbitmq)
-                    .WithEnvironment("RAGKIVIO_AUTHORITY", env["RAGKIVIO_AUTHORITY"])
-                    .WithEnvironment("RAGKIVIO_AUDIENCE", env["RAGKIVIO_AUDIENCE"])
-                    .WithEnvironment("RAGKIVIO_AUTH_ID", env["RAGKIVIO_AUTH_CLIENT_ID"])
-                    .WithEnvironment("RAGKIVIO_AUTH_DOMAIN", env["RAGKIVIO_AUTH_DOMAIN"])
-                    .WithEnvironment("RAGKIVIO_AUTH_AUDIENCE", env["RAGKIVIO_AUTH_AUDIENCE"])
+                    .WithEnvironment("RAGKIVIO_AUTHORITY", env["AUTH__AUTHORITY"])
+                    .WithEnvironment("RAGKIVIO_AUDIENCE", env["AUTH__AUDIENCE"])
+                    .WithEnvironment("RAGKIVIO_AUTH_ID", env["AUTH__AUTH_ID"])
                     .WithEnvironment(context =>
                     {
                         context.EnvironmentVariables["RABBIT_MQ__USER"] = rabbitmq.Resource.UserNameParameter!;

@@ -4,12 +4,11 @@ using FluentResults;
 using Ragkivio.Application.Common;
 using Ragkivio.Application.Common.Errors;
 using Ragkivio.Application.User.Dto;
-using Ragkivio.Application.User.Mapper;
 using Ragkivio.Application.User.Services;
 using Ragkivio.Domain.Common.Exceptions;
 using Ragkivio.Domain.User;
 
-public sealed class RegisterUserUseCase(IUserRepository userRepository, IUnitOfWork unitOfWork, IUserProvider userProvider, UserMapper mapper)
+public sealed class RegisterUserUseCase(IUserRepository userRepository, IUnitOfWork unitOfWork, IUserProvider userProvider)
     : IUseCaseAsync<User, RegisterUserDto>
 {
     public async Task<Result<User>> HandleAsync(RegisterUserDto input, CancellationToken token = default)

@@ -28,7 +28,6 @@ internal static partial class UserMapper
 
     public static partial IQueryable<UserDomain> ProjectToDomain(this IQueryable<UserPersistence> query);
 
-    [MapperIgnoreSource(nameof(UserDomain.IsRegistered))]
     [MapperIgnoreTarget(nameof(UserPersistence.AuthId))]
     [MapperIgnoreTarget(nameof(UserPersistence.IsDelete))]
     [MapperIgnoreTarget(nameof(UserPersistence.DeletedAt))]

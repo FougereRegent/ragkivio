@@ -13,7 +13,8 @@ public static class UserMeQueryCls
         {
             descriptor.Field("me")
                 .Use<AuthMiddleware>()
-                .Resolve(HandleAsync);
+                .Resolve(HandleAsync)
+                .Type<UserType>();
             return descriptor;
         }
     }

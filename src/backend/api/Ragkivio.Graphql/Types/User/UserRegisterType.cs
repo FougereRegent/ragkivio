@@ -13,7 +13,7 @@ public sealed class UserRegisterType : InputObjectType<RegisterUserDto>
         descriptor.Field(f => f.LastName)
             .Type<NonNullType<StringType>>();
         descriptor.Field(f => f.BirthDate)
-            .Type<NonNullType<LocalDateType>>();
+            .Type<NonNullType<DateType>>();
         descriptor.Field(f => f.PhoneNumber)
             .Type<StringType>()
             .DefaultValue(null);
