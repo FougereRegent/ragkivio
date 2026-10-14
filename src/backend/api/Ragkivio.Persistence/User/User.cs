@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace Ragkivio.Persistence.User;
 
-internal class User : Entity
+internal sealed class User : Entity
 {
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
