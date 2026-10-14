@@ -10,7 +10,7 @@ using Ragkivio.Persistence;
 
 #nullable disable
 
-namespace Ragkivio.Persistence.Ragkivio.Persistence.Migrations
+namespace Ragkivio.Persistence.Migrations
 {
     [DbContext(typeof(RagkivioContext))]
     [Migration("20261014210316_AddProjectEntity")]

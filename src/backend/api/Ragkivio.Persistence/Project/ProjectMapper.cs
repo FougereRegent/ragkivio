@@ -9,17 +9,19 @@ using ProjectPersistence = Ragkivio.Persistence.Project.Project;
 [Mapper]
 internal static partial class ProjectMapper
 {
-    [MapProperty(source: nameof(ProjectPersistence.Color), target: [nameof(ProjectDomain.Color), nameof(ColorElement.ColorHex)])]
-    [MapProperty(source: [nameof(ProjectDomain.Color), nameof(ColorElement.ColorHex)], target: nameof(ProjectDomain.Visibility))]
+    [MapProperty(nameof(ProjectPersistence.Color), nameof(ProjectDomain.Color), Use = nameof(MapColor))]
+    [MapProperty(nameof(ProjectPersistence.IsShared), nameof(ProjectDomain.Visibility), Use = nameof(MapVisibility))]
     public static partial ProjectDomain ToDomain(ProjectPersistence project);
 
-    [MapProperty(target: nameof(ProjectPersistence.IsShared), source: nameof(ProjectDomain.Visibility), Use = nameof(MapToShared))]
-    [MapProperty(source: [nameof(ProjectDomain.Color), nameof(ColorElement.ColorHex)], target: nameof(ProjectPersistence.Color))]
+    [MapProperty(nameof(ProjectDomain.Visibility), nameof(ProjectPersistence.IsShared), Use = nameof(MapToShared))]
+    [MapProperty(nameof(ProjectDomain.Color), nameof(ProjectPersistence.Color), Use = nameof(MapColorHex))]
     public static partial ProjectPersistence ToPersistence(ProjectDomain project);
 
     public static partial IQueryable<ProjectDomain> ProjectToDomain(this IQueryable<ProjectPersistence> projects);
 
 
+    [MapProperty(nameof(ProjectDomain.Visibility), nameof(ProjectPersistence.IsShared), Use = nameof(MapToShared))]
+    [MapProperty(nameof(ProjectDomain.Color), nameof(ProjectPersistence.Color), Use = nameof(MapColorHex))]
     public static partial void Hydrate(ProjectDomain source, ProjectPersistence target);
 
     private static ColorElement MapColor(string color)
@@ -28,6 +30,11 @@ internal static partial class ProjectMapper
         {
             ColorHex = color
         };
+    }
+
+    private static string MapColorHex(ColorElement color)
+    {
+        return color.ColorHex;
     }
 
     private static Visibility MapVisibility(bool isShared) {

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Ragkivio.Persistence.Ragkivio.Persistence.Migrations
+namespace Ragkivio.Persistence.Migrations
 {
     /// <inheritdoc />
     public partial class AddProjectEntity : Migration
