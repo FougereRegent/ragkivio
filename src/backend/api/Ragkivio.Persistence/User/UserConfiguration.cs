@@ -9,7 +9,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
     {
         builder.ToTable("users");
         builder.HasKey(pre => pre.Id)
-            .HasName("id");
+            .HasName("pk_users");
 
         builder.Property(pre => pre.Email)
             .HasColumnName("email")

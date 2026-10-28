@@ -11,6 +11,18 @@ namespace Ragkivio.Persistence.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // Primary key constraint names must be unique per schema in PostgreSQL.
+            // The users primary key used to be named "id", which prevented creating
+            // the projects table (its primary key would also have been named "id").
+            migrationBuilder.DropPrimaryKey(
+                name: "id",
+                table: "users");
+
+            migrationBuilder.AddPrimaryKey(
+                name: "pk_users",
+                table: "users",
+                column: "id");
+
             migrationBuilder.CreateTable(
                 name: "projects",
                 columns: table => new
@@ -28,7 +40,7 @@ namespace Ragkivio.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("id", x => x.id);
+                    table.PrimaryKey("pk_projects", x => x.id);
                 });
 
             migrationBuilder.CreateIndex(
@@ -43,6 +55,15 @@ namespace Ragkivio.Persistence.Migrations
         {
             migrationBuilder.DropTable(
                 name: "projects");
+
+            migrationBuilder.DropPrimaryKey(
+                name: "pk_users",
+                table: "users");
+
+            migrationBuilder.AddPrimaryKey(
+                name: "id",
+                table: "users",
+                column: "id");
         }
     }
 }

@@ -79,7 +79,7 @@ namespace Ragkivio.Persistence.Migrations
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
-                        .HasName("id");
+                        .HasName("pk_projects");
 
                     b.HasIndex("Name", "TenantId")
                         .IsUnique()
@@ -148,7 +148,7 @@ namespace Ragkivio.Persistence.Migrations
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
-                        .HasName("id");
+                        .HasName("pk_users");
 
                     b.HasIndex("AuthId")
                         .IsUnique()

@@ -9,7 +9,7 @@ internal sealed class ProjectConfiguration : IEntityTypeConfiguration<Project>
     {
         builder.ToTable("projects");
         builder.HasKey(pre => pre.Id)
-            .HasName("id");
+            .HasName("pk_projects");
 
         builder.Property(pre => pre.Name)
             .HasColumnName("name")
