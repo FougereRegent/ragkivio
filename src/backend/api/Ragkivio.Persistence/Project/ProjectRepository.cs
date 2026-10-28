@@ -1,3 +1,4 @@
+using Ragkivio.Application.Configuration;
 using Ragkivio.Domain.Project;
 using Ragkivio.Persistence.Common;
 
@@ -8,7 +9,8 @@ using ProjectDomain = Ragkivio.Domain.Project.Project;
 
 internal sealed class ProjectRepository : GenericRepository<ProjectPersistence, ProjectDomain>, IProjectRepository
 {
-    public ProjectRepository(RagkivioContext context) : base(context)
+    public ProjectRepository(RagkivioContext context, IDomainEventCollector domainEventCollector)
+        : base(context, domainEventCollector)
     {
 
     }

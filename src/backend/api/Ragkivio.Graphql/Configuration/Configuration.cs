@@ -1,4 +1,4 @@
-using Ragkivio.Graphql.Configuration.Application;
+using Ragkivio.Application.Configuration;
 using Ragkivio.Graphql.Configuration.Infrastructure;
 using Ragkivio.Graphql.Configuration.Options;
 using Ragkivio.Graphql.Configuration.Presentation;

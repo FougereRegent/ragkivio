@@ -6,9 +6,12 @@ namespace Ragkivio.Application.Configuration;
 
 public static class CommonConfiguration
 {
-    extension(IServiceCollection collection) {
-        public IServiceCollection AddCommon() {
-            collection.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
+    extension(IServiceCollection collection)
+    {
+        public IServiceCollection AddCommon()
+        {
+            collection.AddScoped<IDomainEventCollector, DomainEventCollector>()
+                .AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
             return collection;
         }
     }

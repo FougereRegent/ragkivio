@@ -17,31 +17,29 @@ public sealed class DomainEventDispatcher(IServiceProvider serviceProvider) : ID
             var handlers = serviceProvider.GetServices(handlerType);
 
             foreach(var handler in handlers) {
-                var wrapper = HandlerWrapper.Create(handler, handlerType);
+                var wrapper = HandlerWrapper.Create(handler, domainType);
                 await wrapper.HandleAsync(domainEvent, cancellationToken);
             }
         }
     }
 }
 
-internal abstract class HandlerWrapper 
+internal abstract class HandlerWrapper
 {
-    internal abstract Task HandleAsync(IDomainEvent domainEvent, CancellationToken cancellationToken = default!);
+    internal abstract Task HandleAsync(IDomainEvent domainEvent, CancellationToken cancellationToken = default);
 
-    internal static HandlerWrapper Create(object handler, Type domainEvent) 
+    internal static HandlerWrapper Create(object handler, Type eventType)
     {
-        Type handlerType = typeof(HandlerWrapper<>).MakeGenericType(domainEvent);
+        var wrapperType = typeof(HandlerWrapper<>).MakeGenericType(eventType);
 
-        return (HandlerWrapper)Activator.CreateInstance(handlerType, handler)!;
+        return (HandlerWrapper)Activator.CreateInstance(wrapperType, handler)!;
     }
 }
 
-internal class HandlerWrapper<T>(object handler) : HandlerWrapper where T : IDomainEvent 
+internal sealed class HandlerWrapper<T>(object handler) : HandlerWrapper where T : IDomainEvent
 {
     private readonly IDomainEventHandler<T> _handler = (IDomainEventHandler<T>)handler;
 
-    internal override async Task HandleAsync(IDomainEvent domainEvent, CancellationToken cancellationToken = default)
-        {
-            await _handler.HandleAsync((T)domainEvent, cancellationToken);
-        }
+    internal override Task HandleAsync(IDomainEvent domainEvent, CancellationToken cancellationToken = default)
+        => _handler.HandleAsync((T)domainEvent, cancellationToken);
 }

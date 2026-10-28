@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Ragkivio.Application.Configuration;
 using Ragkivio.Persistence.Common.Entities;
 
 namespace Ragkivio.Persistence.Common;
@@ -7,6 +8,7 @@ internal abstract class GenericRepository<T_IN, T_OUT> : Domain.Common.IGenericR
 
     protected readonly DbSet<T_IN> _dbSet;
     protected readonly RagkivioContext _context;
+    protected readonly IDomainEventCollector _domainEventCollector;
 
     private protected abstract IQueryable<T_OUT> ProjectionToDomain(IQueryable<T_IN> collection);
 
@@ -20,13 +22,17 @@ internal abstract class GenericRepository<T_IN, T_OUT> : Domain.Common.IGenericR
     private protected IEnumerable<T_OUT> ToDomain(IEnumerable<T_IN> entities) =>
         entities.Select(pre => ToDomain(pre));
 
-    public GenericRepository(RagkivioContext context) {
+    private void TrackEntity(params T_OUT[] entities) => _domainEventCollector.Track(entities);
+
+    public GenericRepository(RagkivioContext context, IDomainEventCollector domainEventCollector) {
         this._context = context;
         this._dbSet = context.Set<T_IN>();
+        this._domainEventCollector = domainEventCollector;
     }
 
     public async Task DeleteAsync(T_OUT entity, CancellationToken token = default)
     {
+        TrackEntity(entity);
         var persistenceEntity = ToPersistence(entity);
         await _dbSet.Where(pre => pre.Id == persistenceEntity.Id)
             .ExecuteDeleteAsync(token);
@@ -35,7 +41,10 @@ internal abstract class GenericRepository<T_IN, T_OUT> : Domain.Common.IGenericR
 
     public async Task DeleteAsync(IEnumerable<T_OUT> entities, CancellationToken token = default)
     {
-        var persistenceEntities = ToPersistence(entities)
+        var domainEntities = entities.ToArray();
+        TrackEntity(domainEntities);
+
+        var persistenceEntities = ToPersistence(domainEntities)
             .Select(pre => pre.Id)
             .ToHashSet();
 
@@ -55,6 +64,8 @@ internal abstract class GenericRepository<T_IN, T_OUT> : Domain.Common.IGenericR
 
     public async Task<T_OUT?> SaveAsync(T_OUT entity, CancellationToken token = default)
     {
+        TrackEntity(entity);
+
         var persistenceEntity = ToPersistence(entity);
         await _dbSet.AddAsync(persistenceEntity, token);
         await _context.SaveChangesAsync(token);
@@ -63,7 +74,10 @@ internal abstract class GenericRepository<T_IN, T_OUT> : Domain.Common.IGenericR
 
     public virtual async Task<IEnumerable<T_OUT>> SaveAsync(IEnumerable<T_OUT> entities, CancellationToken token = default)
     {
-        var persistenceEntities = ToPersistence(entities)
+        var domainEntities = entities.ToArray();
+        TrackEntity(domainEntities);
+
+        var persistenceEntities = ToPersistence(domainEntities)
             .ToHashSet();
         await _dbSet.AddRangeAsync(persistenceEntities, token);
         await _context.SaveChangesAsync(token);
@@ -72,6 +86,8 @@ internal abstract class GenericRepository<T_IN, T_OUT> : Domain.Common.IGenericR
 
     public async Task UpdateAsync(T_OUT entity, CancellationToken token = default)
     {
+        TrackEntity(entity);
+
         var entityPersistence = await _dbSet.FindAsync(entity.Id);
         ArgumentNullException.ThrowIfNull(entityPersistence);
 
@@ -84,6 +100,7 @@ internal abstract class GenericRepository<T_IN, T_OUT> : Domain.Common.IGenericR
     {
         foreach (var entity in entities)
         {
+            TrackEntity(entity);
             var entityPersistence = await _dbSet.FindAsync(entity.Id, token);
             ArgumentNullException.ThrowIfNull(entityPersistence);
             HydratePersistenceEntity(entity, entityPersistence);

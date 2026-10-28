@@ -1,3 +1,4 @@
+using Ragkivio.Application.Configuration;
 using Ragkivio.Domain.User;
 using Ragkivio.Persistence.Common;
 using UserDomain = Ragkivio.Domain.User.User;
@@ -8,7 +9,8 @@ namespace Ragkivio.Persistence.User;
 
 internal sealed class UserRepository : GenericRepository<UserPersistence, UserDomain>, IUserRepository
 {
-    public UserRepository(RagkivioContext dbContext) : base(dbContext) {}
+    public UserRepository(RagkivioContext dbContext, IDomainEventCollector domainEventCollector)
+        : base(dbContext, domainEventCollector) {}
 
     public async Task<UserDomain?> GetUserByAuthIdAsync(string authId, CancellationToken token = default)
     {
