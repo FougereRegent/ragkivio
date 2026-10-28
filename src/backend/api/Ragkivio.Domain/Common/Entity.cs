@@ -1,6 +1,7 @@
 namespace Ragkivio.Domain.Common;
 
-public class Entity<T> where T : struct
+public class Entity<T> : AggregateRoot 
+where T : struct
 {
     public T Id { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
