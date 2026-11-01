@@ -10,7 +10,7 @@ public class RagkivioContextFactory : IDesignTimeDbContextFactory<RagkivioContex
     {
         var optionsBuilder = new DbContextOptionsBuilder<RagkivioContext>();
         optionsBuilder.UseNpgsql(GetConnectionString());
-        return new RagkivioContext(optionsBuilder.Options);
+        return new RagkivioContext(optionsBuilder.Options, null!);
     }
 
     private static string GetConnectionString()

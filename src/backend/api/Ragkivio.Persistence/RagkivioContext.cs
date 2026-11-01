@@ -1,16 +1,27 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using Ragkivio.Application.User.Services;
 using Ragkivio.Persistence.Common.Entities;
 using Ragkivio.Persistence.Common.Interceptors;
+using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 
 namespace Ragkivio.Persistence;
 
 public class RagkivioContext : DbContext
 {
+    internal const string TENANCY_QUERY_FILTER = "query-flter.tenancy";
+    internal const string DELETE_QUERY_FILTER = "delete-flter.tenancy";
+        
+    private readonly IUserProvider userProvider;
 
     internal DbSet<Persistence.User.User> Users { get; set; }
 
-    public RagkivioContext(DbContextOptions<RagkivioContext> options) : base(options)
+    internal Guid TenantId => userProvider?.UserId ?? Guid.Empty;
+
+    public RagkivioContext(DbContextOptions<RagkivioContext> options, IUserProvider userProvider) : base(options)
     {
+        this.userProvider = userProvider;
     }
 
     protected RagkivioContext()
@@ -30,6 +41,7 @@ public class RagkivioContext : DbContext
             .UseLowerCaseNamingConvention();
 
         optionsBuilder.AddInterceptors([
+                new TenancyInterceptor(),
                 new SoftDeleteInterceptor(),
                 new CreateUpdateInterceptor(),
         ]);
@@ -38,7 +50,7 @@ public class RagkivioContext : DbContext
     }
 
 
-    private static void ConfigureEntities(ModelBuilder modelBuilder)
+    private void ConfigureEntities(ModelBuilder modelBuilder)
     {
         foreach (var entity in modelBuilder.Model.GetEntityTypes())
         {
@@ -57,6 +69,12 @@ public class RagkivioContext : DbContext
                     .SetColumnName("deleted_at");
                 entity.FindProperty(nameof(Entity.IsDelete))?
                     .SetColumnName("is_delete");
+             
+                var parameter = Expression.Parameter(entity.ClrType, "e");
+                var propertyExpression = Expression.Property(parameter, nameof(Entity.IsDelete));
+                var isDeleteLambda = Expression.Lambda(Expression.Not(propertyExpression), parameter);
+                
+                entity.SetQueryFilter(DELETE_QUERY_FILTER, isDeleteLambda);
             }
 
             if (typeof(EntityWithTenancy).IsAssignableFrom(entity.ClrType))
@@ -65,8 +83,15 @@ public class RagkivioContext : DbContext
                     .SetColumnName("tenant_id");
                 entity.FindProperty(nameof(EntityWithTenancy.TenantId))?
                     .SetColumnOrder(2);
+
+                var parameter = Expression.Parameter(entity.ClrType, "e");
+                var propertyExpression = Expression.Property(parameter, nameof(EntityWithTenancy.TenantId));
+                var tenantIdExpression = Expression.Property(Expression.Constant(this), nameof(TenantId));
+                var equalExpression = Expression.Equal(propertyExpression, tenantIdExpression);
+                var tenantIdFilter = Expression.Lambda(equalExpression, parameter);
+
+                entity.SetQueryFilter(TENANCY_QUERY_FILTER, tenantIdFilter);
             }
-            
         }
     }
 }
