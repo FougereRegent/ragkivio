@@ -5,7 +5,7 @@ public class AggregateRoot
     private readonly List<IDomainEvent> @events = 
         new List<IDomainEvent>();
 
-    public IReadOnlyList<IDomainEvent> DomainEvents => @events;
+    public IReadOnlyList<IDomainEvent> DomainEvents() => @events;
 
 
     public void AddDomainEvent(IDomainEvent domainEvent) {

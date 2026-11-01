@@ -24,7 +24,7 @@ internal sealed class DomainEventCollector : IDomainEventCollector
     {
         // Matérialiser AVANT de vider les agrégats : SelectMany est paresseux.
         var events = _aggregates
-            .SelectMany(aggregate => aggregate.DomainEvents)
+            .SelectMany(aggregate => aggregate.DomainEvents())
             .ToList();
 
         foreach (var aggregate in _aggregates)

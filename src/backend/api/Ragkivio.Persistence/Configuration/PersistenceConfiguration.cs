@@ -5,6 +5,7 @@ using Ragkivio.Persistence.Common;
 using Ragkivio.Persistence.Common.Options;
 using Microsoft.EntityFrameworkCore;
 using Ragkivio.Graphql.Configuration.Persistence.User;
+using Ragkivio.Persistence.Configuration.Project;
 
 namespace Ragkivio.Persistence.Configuration;
 
@@ -29,7 +30,9 @@ public static class PersistenceConfiguration
             });
 
             services.AddScoped<IUnitOfWork, UnitOfWork>()
-                .AddUserPersistence();
+                .AddUserPersistence()
+                .AddProjectPersistence();
+
             return services;
         }
 

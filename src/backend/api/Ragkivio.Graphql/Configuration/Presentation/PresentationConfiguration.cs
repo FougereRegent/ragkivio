@@ -31,6 +31,7 @@ public static class PresentationConfiguration
             });
 
             services.AddGraphQLServer()
+                .TryAddTypeInterceptor<AggregateRootTypeInterceptor>()
                 .AddAuthorization()
                 .AddQueryType<QueryType>()
                 .AddMutationType<MutationType>()

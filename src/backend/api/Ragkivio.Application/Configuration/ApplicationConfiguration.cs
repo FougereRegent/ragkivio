@@ -1,7 +1,8 @@
+namespace Ragkivio.Application.Configuration;
+
 using Microsoft.Extensions.DependencyInjection;
 using Ragkivio.Application.Configuration.User;
-
-namespace Ragkivio.Application.Configuration;
+using Ragkivio.Application.Project.Configuration;
 
 public static class ApplicationConfiguration
 {
@@ -10,7 +11,8 @@ public static class ApplicationConfiguration
         public IServiceCollection AddApplication()
         {
             collection.AddCommon()
-                .AddUser();
+                .AddUser()
+                .AddProject();
 
             return collection;
         }
