@@ -7,6 +7,8 @@ public sealed class UserType : ObjectType<User>
 {
     protected override void Configure(IObjectTypeDescriptor<User> descriptor)
     {
+        descriptor.Ignore(f => f.DomainEvents);
+
         descriptor.Field(f => f.Id)
             .Type<NonNullType<UuidType>>();
         descriptor.Field(f => f.Email)
