@@ -1,11 +1,11 @@
-using Ragkivio.Application.Configuration;
-using Ragkivio.Domain.Project;
-using Ragkivio.Persistence.Common;
-
 namespace Ragkivio.Persistence.Project;
 
 using ProjectPersistence = Ragkivio.Persistence.Project.Project;
 using ProjectDomain = Ragkivio.Domain.Project.Project;
+using Ragkivio.Application.Configuration;
+using Ragkivio.Domain.Project;
+using Ragkivio.Persistence.Common;
+using Microsoft.EntityFrameworkCore;
 
 internal sealed class ProjectRepository : GenericRepository<ProjectPersistence, ProjectDomain>, IProjectRepository
 {
@@ -34,4 +34,8 @@ internal sealed class ProjectRepository : GenericRepository<ProjectPersistence, 
     {
         return ProjectMapper.ToPersistence(entity);
     }
+
+    public async Task<ProjectDomain?> GetByNameAsync(string name, CancellationToken token)  =>
+        await this.GetAll().FirstOrDefaultAsync(pre => pre.Name == name, token);
+   
 }

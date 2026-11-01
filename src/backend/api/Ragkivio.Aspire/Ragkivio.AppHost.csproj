@@ -9,6 +9,7 @@
 	<PackageReference Include="Aspire.Npgsql" />
 	<PackageReference Include="Aspire.Hosting.PostgreSQL" />
 	<PackageReference Include="Aspire.Hosting.RabbitMQ" />
+	<PackageReference Include="HotChocolate.Data" />
   </ItemGroup>
 
   <PropertyGroup>

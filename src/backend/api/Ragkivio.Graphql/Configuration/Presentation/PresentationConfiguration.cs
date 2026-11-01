@@ -31,6 +31,12 @@ public static class PresentationConfiguration
             });
 
             services.AddGraphQLServer()
+                .ModifyPagingOptions(opts =>
+                {
+                    opts.MaxPageSize = 100;
+                    opts.IncludeTotalCount = true;
+                    opts.DefaultPageSize = 25;
+                })
                 .TryAddTypeInterceptor<AggregateRootTypeInterceptor>()
                 .AddAuthorization()
                 .AddQueryType<QueryType>()

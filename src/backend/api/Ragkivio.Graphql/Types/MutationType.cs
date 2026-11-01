@@ -1,3 +1,4 @@
+using Ragkivio.Graphql.Types.Project;
 using Ragkivio.Graphql.Types.User;
 
 namespace Ragkivio.Graphql.Types;
@@ -10,5 +11,6 @@ public class MutationType : ObjectType<Mutation>
     {
         descriptor.Authorize();
         descriptor.RegisterUser();
+        descriptor.CreateProject();
     }
 }
