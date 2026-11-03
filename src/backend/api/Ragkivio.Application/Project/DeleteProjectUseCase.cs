@@ -17,8 +17,8 @@ public sealed class DeleteProjectUseCase(
         {
             return FluentResults.Result.Fail("");
         }
-
         try
+
         {
             await unitOfWork.ExecuteAsync(async () =>
             {

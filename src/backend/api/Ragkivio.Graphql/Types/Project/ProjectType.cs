@@ -42,3 +42,20 @@ public sealed class CreateProjectRequestType : InputObjectType<CreateProjectRequ
             .Type<EnumType<Visibility>>();
     }
 }
+
+public sealed class UpdateProjectRequestType : InputObjectType<UpdateProjectRequest>
+{
+    protected override void Configure(IInputObjectTypeDescriptor<UpdateProjectRequest> descriptor)
+    {
+        descriptor.Field(f => f.Id)
+            .Type<NonNullType<UuidType>>();
+        descriptor.Field(f => f.Name)
+            .Type<NonNullType<StringType>>();
+        descriptor.Field(f => f.Description)
+            .Type<StringType>();
+        descriptor.Field(f => f.Color)
+            .Type<StringType>();
+        descriptor.Field(f => f.Visibility)
+            .Type<EnumType<Visibility>>();
+    }
+}

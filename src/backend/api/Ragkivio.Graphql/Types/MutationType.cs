@@ -13,6 +13,7 @@ public class MutationType : ObjectType<Mutation>
 
         descriptor.RegisterUser()
             .CreateProject()
-            .DeleteProject();
+            .DeleteProject()
+            .UpdateProject();
     }
 }

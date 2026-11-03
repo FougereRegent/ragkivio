@@ -16,7 +16,7 @@ public sealed class Project : Common.Entity
     {
         get; set
         {
-            const string NameRegex = @"^[\p{L}\p{N}][\p{L}\p{N} _-]{1,48}[\p{L}\p{N}]$";;
+            const string NameRegex = @"^[\p{L}\p{N}][\p{L}\p{N} _-]{1,48}[\p{L}\p{N}]$"; ;
 
             if (field == value)
                 return;
@@ -55,8 +55,14 @@ public sealed class Project : Common.Entity
 
     public Visibility Visibility { get; set; } = Visibility.PRIVATE;
 
-    public void Update(string name, string dsescription) {
+    public void Update(string name,
+            string description,
+            string? color,
+            Visibility? visibility)
+    {
         this.Name = name;
-        this.Description = dsescription;
+        this.Description = description;
+        this.Color.ColorHex = color ?? this.Color.ColorHex;
+        this.Visibility = visibility ?? this.Visibility;
     }
 }
