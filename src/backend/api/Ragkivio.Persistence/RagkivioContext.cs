@@ -41,8 +41,8 @@ public class RagkivioContext : DbContext
             .UseLowerCaseNamingConvention();
 
         optionsBuilder.AddInterceptors([
-                new TenancyInterceptor(),
                 new SoftDeleteInterceptor(),
+                new TenancyInterceptor(),
                 new CreateUpdateInterceptor(),
         ]);
 

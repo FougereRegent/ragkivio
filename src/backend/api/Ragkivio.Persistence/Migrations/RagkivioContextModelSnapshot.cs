@@ -78,9 +78,9 @@ namespace Ragkivio.Persistence.Migrations
                     b.HasKey("Id")
                         .HasName("pk_projects");
 
-                    b.HasIndex("Name", "TenantId")
+                    b.HasIndex("Name", "TenantId", "IsDelete", "CreatedAt")
                         .IsUnique()
-                        .HasDatabaseName("ix_projects_name_tenantid");
+                        .HasDatabaseName("ix_projects_name_tenantid_isdelete_createdat");
 
                     b.ToTable("projects", (string)null);
                 });

@@ -10,7 +10,9 @@ public class MutationType : ObjectType<Mutation>
     protected override void Configure(IObjectTypeDescriptor<Types.Mutation> descriptor)
     {
         descriptor.Authorize();
-        descriptor.RegisterUser();
-        descriptor.CreateProject();
+
+        descriptor.RegisterUser()
+            .CreateProject()
+            .DeleteProject();
     }
 }

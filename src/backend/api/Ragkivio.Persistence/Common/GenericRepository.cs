@@ -4,7 +4,8 @@ using Ragkivio.Persistence.Common.Entities;
 
 namespace Ragkivio.Persistence.Common;
 
-internal abstract class GenericRepository<T_IN, T_OUT> : Domain.Common.IGenericRepository<T_OUT> where T_IN : Entity where T_OUT : Domain.Common.Entity {
+internal abstract class GenericRepository<T_IN, T_OUT> : Domain.Common.IGenericRepository<T_OUT> where T_IN : Entity where T_OUT : Domain.Common.Entity
+{
 
     protected readonly DbSet<T_IN> _dbSet;
     protected readonly RagkivioContext _context;
@@ -24,32 +25,56 @@ internal abstract class GenericRepository<T_IN, T_OUT> : Domain.Common.IGenericR
 
     private void TrackEntity(params T_OUT[] entities) => _domainEventCollector.Track(entities);
 
-    public GenericRepository(RagkivioContext context, IDomainEventCollector domainEventCollector) {
+    public GenericRepository(RagkivioContext context, IDomainEventCollector domainEventCollector)
+    {
         this._context = context;
         this._dbSet = context.Set<T_IN>();
         this._domainEventCollector = domainEventCollector;
     }
 
-    public async Task DeleteAsync(T_OUT entity, CancellationToken token = default)
+    public async Task DeleteAsync(T_OUT entity, bool softDelete = true, CancellationToken token = default)
     {
         TrackEntity(entity);
         var persistenceEntity = ToPersistence(entity);
-        await _dbSet.Where(pre => pre.Id == persistenceEntity.Id)
-            .ExecuteDeleteAsync(token);
+
+        if (softDelete)
+        {
+            persistenceEntity = await _dbSet.FindAsync(persistenceEntity.Id, token);
+            if (persistenceEntity != null) _dbSet.Remove(persistenceEntity);
+        }
+        else
+        {
+            await _dbSet.Where(pre => pre.Id == persistenceEntity.Id)
+                .ExecuteDeleteAsync(token);
+        }
         await _context.SaveChangesAsync(token);
     }
 
-    public async Task DeleteAsync(IEnumerable<T_OUT> entities, CancellationToken token = default)
+    public async Task DeleteAsync(IEnumerable<T_OUT> entities, bool softDelete = true, CancellationToken token = default)
     {
         var domainEntities = entities.ToArray();
         TrackEntity(domainEntities);
 
-        var persistenceEntities = ToPersistence(domainEntities)
-            .Select(pre => pre.Id)
-            .ToHashSet();
+        if (softDelete)
+        {
+            var length = entities.Count();
+            var deleteEntites = new T_IN?[entities.Count()];
+            var i = 0;
+            foreach (var entity in entities) 
+                deleteEntites[i++] = await _dbSet.FindAsync(entity.Id, token);
 
-        await _dbSet.Where(pre => persistenceEntities.Contains(pre.Id))
-            .ExecuteDeleteAsync(token);
+            _dbSet.RemoveRange(deleteEntites.Where(pre => pre != null)
+                .ToArray()!);
+        }
+        else
+        {
+            var persistenceEntities = ToPersistence(domainEntities)
+                .Select(pre => pre.Id)
+                .ToHashSet();
+
+            await _dbSet.Where(pre => persistenceEntities.Contains(pre.Id))
+                .ExecuteDeleteAsync(token);
+        }
         await _context.SaveChangesAsync(token);
     }
 
@@ -104,7 +129,6 @@ internal abstract class GenericRepository<T_IN, T_OUT> : Domain.Common.IGenericR
             var entityPersistence = await _dbSet.FindAsync(entity.Id, token);
             ArgumentNullException.ThrowIfNull(entityPersistence);
             HydratePersistenceEntity(entity, entityPersistence);
-            
             _dbSet.Update(entityPersistence);
         }
         await _context.SaveChangesAsync(token);

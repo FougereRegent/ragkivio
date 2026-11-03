@@ -8,7 +8,8 @@ public interface IGenericRepository<T> where T : Entity
     Task<IEnumerable<T>> SaveAsync(IEnumerable<T> entities, CancellationToken token = default);
     Task UpdateAsync(T entity, CancellationToken token = default);
     Task UpdateAsync(IEnumerable<T> entities, CancellationToken token = default);
-    Task DeleteAsync(T entity, CancellationToken token = default);
-    Task DeleteAsync(IEnumerable<T> entities, CancellationToken token = default);
+
+    Task DeleteAsync(T entity, bool softDelete = true, CancellationToken token = default);
+    Task DeleteAsync(IEnumerable<T> entities, bool softDelete = true, CancellationToken token = default);
 
 }

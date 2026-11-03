@@ -54,4 +54,9 @@ public sealed class Project : Common.Entity
     public ColorElement Color { get; set; } = new ColorElement { ColorHex = "#FFFFFF" };
 
     public Visibility Visibility { get; set; } = Visibility.PRIVATE;
+
+    public void Update(string name, string dsescription) {
+        this.Name = name;
+        this.Description = dsescription;
+    }
 }

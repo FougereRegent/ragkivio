@@ -10,7 +10,8 @@ public static class ProjectConfiguration
         public IServiceCollection AddProject()
         {
             serviceColelction.AddScoped<IProjectService, ProjectService>()
-                .AddTransient<CreateProjectUseCase>();
+                .AddTransient<CreateProjectUseCase>()
+                .AddTransient<DeleteProjectUseCase>();
 
             return serviceColelction;
         }

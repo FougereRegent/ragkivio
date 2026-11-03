@@ -27,7 +27,7 @@ internal sealed class ProjectConfiguration : IEntityTypeConfiguration<Project>
             .HasColumnName("is_shared")
             .HasDefaultValue(false);
 
-        builder.HasIndex(pre => new { pre.Name, pre.TenantId })
+        builder.HasIndex(pre => new { pre.Name, pre.TenantId, pre.IsDelete, pre.CreatedAt })
             .IsUnique();
     }
 }
