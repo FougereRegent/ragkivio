@@ -6,3 +6,11 @@ public interface IUnitOfWork
     Task ExecuteAsync(Func<Task> act, CancellationToken cancellationToken = default);
     Task<T> ExecuteAsync<T>(Func<Task<T>> act, CancellationToken cancellationToken = default);
 }
+
+public sealed class UnitOfWorkSaveException : InfrastructureException {
+    public override string ExceptionType => "unit-of-work.save";
+
+    public UnitOfWorkSaveException(string message) : base(message) {
+
+    }
+}

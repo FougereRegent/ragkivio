@@ -2,6 +2,7 @@ namespace Ragkivio.Application.Project;
 
 using System.Threading;
 using Ragkivio.Application.Common;
+using Ragkivio.Application.Common.Errors;
 using Ragkivio.Application.Project.Dto;
 using Ragkivio.Domain.Project;
 
@@ -10,6 +11,8 @@ public sealed class DeleteProjectUseCase(
         IUnitOfWork unitOfWork
         ) : IUseCaseAsync<Project, DeleteProjectRequest>
 {
+    private const string ressource = "project.delete";
+
     public async Task<FluentResults.Result<Project>> HandleAsync(DeleteProjectRequest input, CancellationToken token = default)
     {
         var project = await projectRepository.GetByIdAsync(input.Id, token);
@@ -25,9 +28,9 @@ public sealed class DeleteProjectUseCase(
                 await projectRepository.DeleteAsync(project, token: token);
             });
         }
-        catch
+        catch(UnitOfWorkSaveException ex)
         {
-
+            return FluentResults.Result.Fail(new InfrastructureError(ressource, ex));
         }
         return project;
     }

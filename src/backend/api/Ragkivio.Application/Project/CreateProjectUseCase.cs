@@ -2,6 +2,7 @@ namespace Ragkivio.Application.Project;
 
 using FluentResults;
 using Ragkivio.Application.Common;
+using Ragkivio.Application.Common.Errors;
 using Ragkivio.Application.Project.Dto;
 using Ragkivio.Application.Project.Services;
 using Ragkivio.Domain.Project;
@@ -12,20 +13,23 @@ public sealed class CreateProjectUseCase(
     IUnitOfWork unitOfWork
         ) : IUseCaseAsync<Project, CreateProjectRequest>
 {
+    private const string ressource = "project.create";
+
     public async Task<Result<Project>> HandleAsync(CreateProjectRequest input, CancellationToken token = default)
     {
         var isExist = await projectService.ProjectAlreadyExistAsync(input.Name, token);
         if (isExist)
         {
-            return Result.Fail("");
+            return Result.Fail(new AlreadyExistError(ressource, input.Name));
         }
 
-        var project = new Project 
+        var project = new Project
         {
             Name = input.Name,
-            Color = new Domain.Common.ColorElement {
+            Color = new Domain.Common.ColorElement
+            {
                 ColorHex = input.Color
-            }, 
+            },
             Description = input.Description,
             Visibility = input.Visibility
         };
@@ -37,14 +41,11 @@ public sealed class CreateProjectUseCase(
                 project = await projectRepository.SaveAsync(project, token);
             }, cancellationToken: token);
         }
-        catch
+        catch(UnitOfWorkSaveException ex)
         {
-            Result.Fail("");
+            Result.Fail(new InfrastructureError(ressource, ex));
         }
 
-        if(project is null) {
-            return Result.Fail("");
-        }
 
         return Result.Ok(project);
     }

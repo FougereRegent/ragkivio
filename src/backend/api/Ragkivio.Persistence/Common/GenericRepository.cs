@@ -87,7 +87,7 @@ internal abstract class GenericRepository<T_IN, T_OUT> : Domain.Common.IGenericR
         return result is not null ? ToDomain(result) : null;
     }
 
-    public async Task<T_OUT?> SaveAsync(T_OUT entity, CancellationToken token = default)
+    public async Task<T_OUT> SaveAsync(T_OUT entity, CancellationToken token = default)
     {
         TrackEntity(entity);
 

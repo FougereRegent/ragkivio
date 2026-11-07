@@ -49,7 +49,12 @@ public sealed class UnitOfWork(IDomainEventDispatcher eventDispatcher, IDomainEv
                             await transaction.CommitAsync(ct);
                             return value;
                         }
-                        catch
+                        catch (DbUpdateException dbEx)
+                        {
+                            await transaction.RollbackAsync(ct);
+                            throw new UnitOfWorkSaveException(dbEx.Message);
+                        }
+                        catch (OperationCanceledException)
                         {
                             await transaction.RollbackAsync(ct);
                             throw;
