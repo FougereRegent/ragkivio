@@ -11,9 +11,12 @@ using Ragkivio.Domain.User;
 public sealed class RegisterUserUseCase(IUserRepository userRepository, IUnitOfWork unitOfWork, IUserProvider userProvider)
     : IUseCaseAsync<User, RegisterUserDto>
 {
+    private const string resource = "user.register";
+
     public async Task<Result<User>> HandleAsync(RegisterUserDto input, CancellationToken token = default)
     {
         var user = userProvider.CurrentUser;
+
         try
         {
             user.RegisterUser(
@@ -23,18 +26,20 @@ public sealed class RegisterUserUseCase(IUserRepository userRepository, IUnitOfW
                     phoneNumber: input.PhoneNumber,
                     birthDate: input.BirthDate
                     );
-        }
-        catch (Exception ex) when (ex is BusinessException)
-        {
-            return Result.Fail(new DomainError("user.register", ex.Message));
-        }
 
-        var result = await unitOfWork.ExecuteAsync(async () =>
+            return await unitOfWork.ExecuteAsync(async () =>
+            {
+                await userRepository.UpdateAsync(user, token);
+                return user;
+            }, token);
+        }
+        catch (BusinessException ex)
         {
-            await userRepository.UpdateAsync(user, token);
-            return user;
-        }, token);
-
-        return user;
+            return Result.Fail(new DomainError(resource, ex));
+        }
+        catch (UnitOfWorkSaveException ex)
+        {
+            return Result.Fail(new InfrastructureError(resource, ex));
+        }
     }
 }

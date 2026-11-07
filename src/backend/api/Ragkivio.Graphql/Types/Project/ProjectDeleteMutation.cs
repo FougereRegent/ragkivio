@@ -30,6 +30,6 @@ public static class ProjectDeleteMutation
         var id = ctx.ArgumentValue<Guid>(argumentProjectId);
         var result = await deleteProjectUseCase.HandleAsync(new DeleteProjectRequest(id), ctx.RequestAborted);
 
-        return result.ToGraphQlException();
+        return result.UnwrapOrThrow();
     }
 }

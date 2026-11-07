@@ -2,39 +2,32 @@ namespace Ragkivio.Graphql.Common;
 
 using FluentResults;
 
-public static class ErrorHelper
+internal static class ErrorHelper
 {
     extension<T>(Result<T> result)
     {
-        public T ToGraphQlException()
+        public T UnwrapOrThrow()
         {
-            if(!IsInError(result)) return result.Value;
-            var error = ExtractError(result);
+            if (result.IsSuccess)
+                return result.Value;
 
-            var graphqlError = GraphqlErrorBuilder.BuildException(error);
-            throw new GraphQLException(graphqlError);
+            throw ToGraphQlException(result.Errors);
         }
     }
 
     extension(Result result)
     {
-        public void ToGraphQlException()
+        public void UnwrapOrThrow()
         {
-            if(!IsInError(result)) return;
-            var error = ExtractError(result);
+            if (result.IsSuccess)
+                return;
 
-            var graphqlError = GraphqlErrorBuilder.BuildException(error);
-            throw new GraphQLException(graphqlError);
+            throw ToGraphQlException(result.Errors);
         }
     }
 
-    private static bool IsInError(Result result) 
-        => result.IsFailed;
-    private static bool IsInError<T>(Result<T> result) 
-        => result.IsFailed;
-
-    private static IError ExtractError(Result result) =>
-        result.Errors[0];
-    private static IError ExtractError<T>(Result<T> result) =>
-        result.Errors[0];
+    private static GraphQLException ToGraphQlException(IReadOnlyList<IError> errors) =>
+        new(errors.Count > 0
+            ? errors.Select(GraphqlErrorBuilder.Build).ToArray()
+            : [GraphqlErrorBuilder.UnknownError()]);
 }

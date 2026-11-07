@@ -12,14 +12,14 @@ public sealed class UpdateProjectUseCase(
         IProjectRepository projectRepository
         ) : IUseCaseAsync<Project, UpdateProjectRequest>
 {
-    private const string ressource = "project.update";
+    private const string resource = "project.update";
 
     public async Task<FluentResults.Result<Project>> HandleAsync(UpdateProjectRequest input, CancellationToken token = default)
     {
         var project = await projectRepository.GetByIdAsync(input.Id, token);
         if (project == null)
         {
-            return FluentResults.Result.Fail(new NotFoundError(ressource, input.Id.ToString()));
+            return FluentResults.Result.Fail(new NotFoundError(resource, input.Id.ToString()));
         }
 
         try
@@ -32,11 +32,11 @@ public sealed class UpdateProjectUseCase(
         }
         catch (BusinessException ex)
         {
-            return FluentResults.Result.Fail(new DomainError(ressource, ex));
+            return FluentResults.Result.Fail(new DomainError(resource, ex));
         }
         catch (UnitOfWorkSaveException ex)
         {
-            return FluentResults.Result.Fail(new InfrastructureError(ressource, ex));
+            return FluentResults.Result.Fail(new InfrastructureError(resource, ex));
         }
 
         return FluentResults.Result.Ok(project);

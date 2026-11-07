@@ -1,5 +1,6 @@
 using HotChocolate.Resolvers;
 using Ragkivio.Application.User;
+using Ragkivio.Graphql.Common;
 using Ragkivio.Graphql.Middleware;
 using UserDomain = Ragkivio.Domain.User.User;
 
@@ -22,6 +23,6 @@ public static class UserMeQueryCls
     private static UserDomain HandleAsync(IResolverContext ctx) {
         var userMeUseCase = ctx.Services.GetRequiredService<MeUserUseCase>();
         var resultUser = userMeUseCase.Handle();
-        return resultUser.Value;
+        return resultUser.UnwrapOrThrow();
     }
 }

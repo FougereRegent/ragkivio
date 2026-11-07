@@ -5,6 +5,7 @@ using Ragkivio.Application.Common;
 using Ragkivio.Application.Common.Errors;
 using Ragkivio.Application.Project.Dto;
 using Ragkivio.Application.Project.Services;
+using Ragkivio.Domain.Common.Exceptions;
 using Ragkivio.Domain.Project;
 
 public sealed class CreateProjectUseCase(
@@ -13,40 +14,43 @@ public sealed class CreateProjectUseCase(
     IUnitOfWork unitOfWork
         ) : IUseCaseAsync<Project, CreateProjectRequest>
 {
-    private const string ressource = "project.create";
+    private const string resource = "project.create";
 
     public async Task<Result<Project>> HandleAsync(CreateProjectRequest input, CancellationToken token = default)
     {
         var isExist = await projectService.ProjectAlreadyExistAsync(input.Name, token);
         if (isExist)
         {
-            return Result.Fail(new AlreadyExistError(ressource, input.Name));
+            return Result.Fail(new AlreadyExistError(resource, input.Name));
         }
-
-        var project = new Project
-        {
-            Name = input.Name,
-            Color = new Domain.Common.ColorElement
-            {
-                ColorHex = input.Color
-            },
-            Description = input.Description,
-            Visibility = input.Visibility
-        };
 
         try
         {
+            var project = new Project
+            {
+                Name = input.Name,
+                Color = new Domain.Common.ColorElement
+                {
+                    ColorHex = input.Color
+                },
+                Description = input.Description,
+                Visibility = input.Visibility
+            };
+
             await unitOfWork.ExecuteAsync(async () =>
             {
                 project = await projectRepository.SaveAsync(project, token);
             }, cancellationToken: token);
+
+            return Result.Ok(project);
         }
-        catch(UnitOfWorkSaveException ex)
+        catch (BusinessException ex)
         {
-            Result.Fail(new InfrastructureError(ressource, ex));
+            return Result.Fail(new DomainError(resource, ex));
         }
-
-
-        return Result.Ok(project);
+        catch (UnitOfWorkSaveException ex)
+        {
+            return Result.Fail(new InfrastructureError(resource, ex));
+        }
     }
 }

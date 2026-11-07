@@ -11,14 +11,14 @@ public sealed class DeleteProjectUseCase(
         IUnitOfWork unitOfWork
         ) : IUseCaseAsync<Project, DeleteProjectRequest>
 {
-    private const string ressource = "project.delete";
+    private const string resource = "project.delete";
 
     public async Task<FluentResults.Result<Project>> HandleAsync(DeleteProjectRequest input, CancellationToken token = default)
     {
         var project = await projectRepository.GetByIdAsync(input.Id, token);
         if (project == null)
         {
-            return FluentResults.Result.Fail(new NotFoundError(ressource, input.Id.ToString()));
+            return FluentResults.Result.Fail(new NotFoundError(resource, input.Id.ToString()));
         }
         try
 
@@ -30,7 +30,7 @@ public sealed class DeleteProjectUseCase(
         }
         catch(UnitOfWorkSaveException ex)
         {
-            return FluentResults.Result.Fail(new InfrastructureError(ressource, ex));
+            return FluentResults.Result.Fail(new InfrastructureError(resource, ex));
         }
         return project;
     }

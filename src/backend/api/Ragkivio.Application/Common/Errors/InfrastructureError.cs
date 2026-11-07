@@ -4,7 +4,7 @@ public class InfrastructureError : BaseError
 {
     public string ErrorType { get; init; } = string.Empty;
 
-    public InfrastructureError(string ressource, InfrastructureException ex) : base(ressource, string.Empty, ex.Message)
+    public InfrastructureError(string resource, InfrastructureException ex) : base(resource, string.Empty, ex.Message)
     {
         this.ErrorType = ex.ExceptionType;
     }

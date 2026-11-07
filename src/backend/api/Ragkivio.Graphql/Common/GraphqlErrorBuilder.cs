@@ -6,51 +6,51 @@ using ChError = HotChocolate.IError;
 
 internal static class GraphqlErrorBuilder
 {
-    private const string AdminMessage = "contact admin please";
+    private const string AdminMessage = "An internal error occurred. Please contact support.";
 
     private const string DomainCode = "DOMAIN";
     private const string InfraCode = "INFRASTRUCTURE";
     private const string NotFoundCode = "NOT_FOUND";
-    private const string AlreadyExistCode = "ALREADY_EXIST";
+    private const string AlreadyExistCode = "ALREADY_EXISTS";
+    private const string UnknownCode = "UNKNOWN";
+    private const string UnknownMessage = "Unknown error";
 
-    internal static ChError BuildException(FlIError error)
+    internal static ChError Build(FlIError error) => error switch
     {
-        var baseError = error as BaseError;
+        InfrastructureError infraError => BuildInfrastructureError(infraError, InfraCode),
+        DomainError domainError => BuildApplicationError(domainError, DomainCode),
+        NotFoundError notFoundError => BuildApplicationError(notFoundError, NotFoundCode),
+        AlreadyExistError alreadyExistError => BuildApplicationError(alreadyExistError, AlreadyExistCode),
+        _ => UnknownError()
+    };
 
-        if (baseError == null)
-            return ErrorBuilder.New()
-                .SetCode("unknow")
-                .SetMessage("unknow error")
-                .Build();
-
-        return baseError switch
-        {
-            InfrastructureError infraErr => InfrastructureError(infraErr, InfraCode),
-            DomainError domainError => ApplicationErrorBuilder(domainError, DomainCode),
-            NotFoundError notFoundError => ApplicationErrorBuilder(notFoundError, NotFoundCode),
-            AlreadyExistError alreadyExistError => ApplicationErrorBuilder(alreadyExistError, AlreadyExistCode),
-            _ => UnknownError()
-        };
-    }
-
-    //TODO : add trace id later
-    private static ChError ApplicationErrorBuilder(BaseError error, string code) =>
-        ErrorBuilder.New()
+    // TODO: add trace id later
+    private static ChError BuildApplicationError(BaseError error, string code)
+    {
+        var builder = ErrorBuilder.New()
             .SetCode(code)
             .SetMessage(error.Message)
-            .SetExtension("ressource", error.Ressource)
-            .Build();
+            .SetExtension("resource", error.Resource);
 
-    private static ChError InfrastructureError(BaseError error, string code) =>
+        if (!string.IsNullOrWhiteSpace(error.Identifier))
+            builder.SetExtension("identifier", error.Identifier);
+
+        if (error is DomainError domainError && !string.IsNullOrWhiteSpace(domainError.PropertyName))
+            builder.SetExtension("field", domainError.PropertyName);
+
+        return builder.Build();
+    }
+
+    private static ChError BuildInfrastructureError(BaseError error, string code) =>
         ErrorBuilder.New()
             .SetCode(code)
             .SetMessage(AdminMessage)
-            .SetExtension("ressource", error.Ressource)
+            .SetExtension("resource", error.Resource)
             .Build();
 
-    private static ChError UnknownError() =>
+    internal static ChError UnknownError() =>
         ErrorBuilder.New()
-            .SetCode("unknow")
-            .SetMessage("unknow error")
+            .SetCode(UnknownCode)
+            .SetMessage(UnknownMessage)
             .Build();
 }

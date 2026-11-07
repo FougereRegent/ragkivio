@@ -25,6 +25,6 @@ public static class UserRegisterMutation
         var userRegisterUseCase = ctx.Services.GetRequiredService<RegisterUserUseCase>();
         var input = ctx.ArgumentValue<RegisterUserDto>(argumentInput);
         var result = await userRegisterUseCase.HandleAsync(input, ctx.RequestAborted);
-        return result.ToGraphQlException();
+        return result.UnwrapOrThrow();
     }
 }

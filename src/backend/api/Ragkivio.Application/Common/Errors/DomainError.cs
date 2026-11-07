@@ -2,10 +2,17 @@ using Ragkivio.Domain.Common.Exceptions;
 
 namespace Ragkivio.Application.Common.Errors;
 
-public sealed class DomainError : BaseError {
-    public DomainError(string ressource, string message) : base(ressource, string.Empty, message){
+public sealed class DomainError : BaseError
+{
+    public string PropertyName { get; }
 
+    public DomainError(string resource, string message) : base(resource, string.Empty, message)
+    {
+        PropertyName = string.Empty;
     }
 
-    public DomainError(string ressource, BusinessException ex) : base(ressource, string.Empty, ex.Message) {}
+    public DomainError(string resource, BusinessException ex) : base(resource, string.Empty, ex.Message)
+    {
+        PropertyName = ex.PropertyName;
+    }
 }

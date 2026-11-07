@@ -13,6 +13,8 @@ public sealed class CreateUserUseCase(IUserRepository userRepository,
     IUnitOfWork unitOfWork,
     IUserProvider userProvider) : IUseCaseAsync<UserDomain, CreateUserDto>
 {
+    private const string resource = "user.create";
+
     public async Task<Result<UserDomain>> HandleAsync(CreateUserDto input, CancellationToken token = default)
     {
         var user = await userRepository.GetUserByAuthIdAsync(input.AuthId, token);
@@ -21,22 +23,25 @@ public sealed class CreateUserUseCase(IUserRepository userRepository,
             return user;
         }
 
-        UserDomain createdUser;
         try
         {
-            createdUser = new UserDomain();
+            var createdUser = new UserDomain();
+
+            var result = await unitOfWork.ExecuteAsync(async () =>
+            {
+                return await userRepository.SaveAsync(createdUser, input.AuthId, token) ?? createdUser;
+            }, token);
+
+            userProvider.SetCurrentUser(result);
+            return result;
         }
         catch (BusinessException ex)
         {
-            return Result.Fail(new DomainError(nameof(UserDomain), ex.Message));
+            return Result.Fail(new DomainError(resource, ex));
         }
-
-        var result = await unitOfWork.ExecuteAsync(async () =>
+        catch (UnitOfWorkSaveException ex)
         {
-            return await userRepository.SaveAsync(createdUser, input.AuthId, token) ?? createdUser;
-        }, token);
-
-        userProvider.SetCurrentUser(result);
-        return result;
+            return Result.Fail(new InfrastructureError(resource, ex));
+        }
     }
 }

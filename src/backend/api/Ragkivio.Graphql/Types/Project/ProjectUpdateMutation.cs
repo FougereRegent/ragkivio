@@ -29,6 +29,6 @@ public static class ProjectUpdateMutation
         var input = ctx.ArgumentValue<UpdateProjectRequest>(argumentInput);
         var result = await updateProjectUseCase.HandleAsync(input, ctx.RequestAborted);
 
-        return result.ToGraphQlException();
+        return result.UnwrapOrThrow();
     }
 }

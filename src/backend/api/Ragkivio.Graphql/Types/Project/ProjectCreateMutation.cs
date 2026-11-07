@@ -27,6 +27,6 @@ public static class ProjectCreationMutation
         var input = ctx.ArgumentValue<CreateProjectRequest>("input");
         var result = await createProjectUseCase.HandleAsync(input, ctx.RequestAborted);
 
-        return result.ToGraphQlException();
+        return result.UnwrapOrThrow();
     }
 }

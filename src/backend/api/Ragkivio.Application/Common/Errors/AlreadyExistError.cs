@@ -2,11 +2,8 @@ namespace Ragkivio.Application.Common.Errors;
 
 public sealed class AlreadyExistError : BaseError
 {
-    private const string defaultMessage = "Ressource {0} with identifier {1} already exist";
+    private const string DefaultMessage = "{0} with identifier {1} already exists";
 
-    public AlreadyExistError(string ressource, string identifier) : base(ressource, identifier, string.Format(defaultMessage, ressource, identifier))
-    {
-
-    }
-
+    public AlreadyExistError(string resource, string identifier)
+        : base(resource, identifier, string.Format(DefaultMessage, resource, identifier)) { }
 }
