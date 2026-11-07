@@ -17,6 +17,18 @@ var password = builder.AddParameter("password", secret: true);
 var rabbitmq = builder.AddRabbitMQ("broker", username, password)
                 .WithManagementPlugin();
 
+var minio = builder.AddContainer("minio", "chainguard/minio:latest")
+                .WithArgs(
+                        "server",
+                        "/data",
+                        "--console-address",
+                        ":9001")
+                    .WithEnvironment("MINIO_ROOT_USER", env["MINIO__USER"] ?? "minioadmin")
+                    .WithEnvironment("MINIO_ROOT_PASSWORD", env["MINIO__PASSWORD"] ?? "change-this-password")
+                    .WithVolume("minio-data", "/data")
+                    .WithHttpEndpoint(port: 9000, targetPort: 9000, name: "s3")
+                    .WithHttpEndpoint(port: 9001, targetPort: 9001, name: "console");
+
 
 var graphqlApi = builder.AddProject<Projects.Ragkivio_Graphql>("graphql-api")
                     .WithOtlpExporter()
