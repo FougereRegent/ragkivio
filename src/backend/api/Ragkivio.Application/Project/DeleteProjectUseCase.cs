@@ -18,7 +18,7 @@ public sealed class DeleteProjectUseCase(
         var project = await projectRepository.GetByIdAsync(input.Id, token);
         if (project == null)
         {
-            return FluentResults.Result.Fail("");
+            return FluentResults.Result.Fail(new NotFoundError(ressource, input.Id.ToString()));
         }
         try
 

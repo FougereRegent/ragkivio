@@ -10,7 +10,7 @@ public static class ProjectQuery
         public IObjectTypeDescriptor<Query> Projects()
         {
             descriptor.Field("projects")
-                .Use<AuthMiddleware>()
+                .Use<CurrentUserMiddleware>()
                 .UsePaging()
                 .UseFiltering()
                 .UseSorting()

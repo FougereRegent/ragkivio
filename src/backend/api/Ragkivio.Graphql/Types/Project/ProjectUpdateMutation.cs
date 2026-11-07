@@ -16,7 +16,7 @@ public static class ProjectUpdateMutation
         {
             descriptor.Field("updateProject")
                 .Argument(argumentInput, a => a.Type<UpdateProjectRequestType>())
-                .Use<AuthMiddleware>()
+                .Use<CurrentUserMiddleware>()
                 .Resolve(HandleAsync);
 
             return descriptor;

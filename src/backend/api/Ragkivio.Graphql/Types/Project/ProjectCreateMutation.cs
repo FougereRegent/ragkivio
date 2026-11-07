@@ -15,7 +15,7 @@ public static class ProjectCreationMutation
         {
             descriptor.Field("createProject")
                 .Argument("input", a => a.Type<CreateProjectRequestType>())
-                .Use<AuthMiddleware>()
+                .Use<CurrentUserMiddleware>()
                 .Resolve(HandleAsync);
             return descriptor;
         }

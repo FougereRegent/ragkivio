@@ -16,7 +16,7 @@ public static class UserRegisterMutation
         {
             descriptor.Field("registerUser")
                 .Argument(argumentInput, a => a.Type<UserRegisterType>())
-                .Use<AuthMiddleware>()
+                .Use<CurrentUserMiddleware>()
                 .Resolve(HandleAsync);
             return descriptor;
         }

@@ -3,16 +3,17 @@ using HotChocolate.Resolvers;
 using Ragkivio.Application.User;
 using Ragkivio.Application.User.Dto;
 using Ragkivio.Application.User.Services;
+using Ragkivio.Graphql.Common;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace Ragkivio.Graphql.Middleware;
 
-internal sealed class AuthMiddleware
+internal sealed class CurrentUserMiddleware
 {
 
     private readonly FieldDelegate _next;
 
-    public AuthMiddleware(FieldDelegate next)
+    public CurrentUserMiddleware(FieldDelegate next)
     {
         _next = next;
     }
@@ -42,20 +43,12 @@ internal sealed class AuthMiddleware
             var userObject = ParseJwt(jwt);
 
             var result = await AddOrGetUser(userObject, userProvider, createUserUseCase);
-            if (result.IsFailed)
-            {
-                throw new GraphQLException(
-                        ErrorBuilder.New()
-                        .SetMessage(result.Errors[0].Message)
-                        .SetCode("AUTH")
-                        .Build()
-                        );
-            }
+            result.ToGraphQlException();
             await _next(context);
         }
         else
         {
-
+            await _next(context);
         }
     }
 

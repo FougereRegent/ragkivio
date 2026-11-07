@@ -12,7 +12,7 @@ public static class UserMeQueryCls
         public IObjectTypeDescriptor<Query> Me()
         {
             descriptor.Field("me")
-                .Use<AuthMiddleware>()
+                .Use<CurrentUserMiddleware>()
                 .Resolve(HandleAsync)
                 .Type<UserType>();
             return descriptor;

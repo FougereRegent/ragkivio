@@ -17,7 +17,7 @@ public static class ProjectDeleteMutation
         {
             descriptor.Field("deleteProject")
                 .Argument(argumentProjectId, a => a.Type<UuidType>())
-                .Use<AuthMiddleware>()
+                .Use<CurrentUserMiddleware>()
                 .Resolve(HandleAsync);
 
             return descriptor;
