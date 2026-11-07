@@ -5,6 +5,7 @@ using Ragkivio.Graphql.Middleware;
 using Ragkivio.Domain.Project;
 using Ragkivio.Application.Project;
 using Ragkivio.Application.Project.Dto;
+using Ragkivio.Graphql.Common;
 
 public static class ProjectCreationMutation
 {
@@ -26,6 +27,6 @@ public static class ProjectCreationMutation
         var input = ctx.ArgumentValue<CreateProjectRequest>("input");
         var result = await createProjectUseCase.HandleAsync(input, ctx.RequestAborted);
 
-        return result.Value;
+        return result.ToGraphQlException();
     }
 }
