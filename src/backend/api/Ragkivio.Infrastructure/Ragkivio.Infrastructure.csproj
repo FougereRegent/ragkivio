@@ -4,4 +4,7 @@
     <PackageReference Include="FluentResults" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ragkivio.Application\Ragkivio.Application.csproj" />
+  </ItemGroup>
 </Project>
