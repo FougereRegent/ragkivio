@@ -10,17 +10,15 @@ builder.Services
 
 var app = builder.Build();
 
-var cancellationTokenSource = new CancellationTokenSource();
-cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(30));
+using var migrationTokenSource = new CancellationTokenSource(TimeSpan.FromMinutes(5));
+using var initTokenSource = new CancellationTokenSource(TimeSpan.FromMinutes(5));
 
 if (ShouldRunMigration(app.Environment))
 {
-    await RunMigrationAsync(cancellationTokenSource.Token);
+    await RunMigrationAsync(migrationTokenSource.Token);
 }
 
-//await RunInitAsync(cancellationTokenSource.Token);
-
-cancellationTokenSource.Dispose();
+await RunInitAsync(initTokenSource.Token);
 
 app.UseRouting();
 app.UseCors("AllowAllOrigin");

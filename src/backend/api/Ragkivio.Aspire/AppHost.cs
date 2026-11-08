@@ -53,7 +53,8 @@ var minio = builder.AddContainer("minio", "chainguard/minio:latest")
                 .WithEnvironment("MINIO_ROOT_PASSWORD", env["MINIO:PASSWORD"])
                 .WithVolume("minio-data", "/data")
                 .WithHttpEndpoint(port: 9000, targetPort: 9000, name: "s3")
-                .WithHttpEndpoint(port: 9001, targetPort: 9001, name: "console");
+                .WithHttpEndpoint(port: 9001, targetPort: 9001, name: "console")
+                .WithHttpHealthCheck(path: "/minio/health/live", endpointName: "s3");
 
 
 var graphqlApi = builder.AddProject<Projects.Ragkivio_Graphql>("graphql-api")
@@ -76,6 +77,7 @@ var graphqlApi = builder.AddProject<Projects.Ragkivio_Graphql>("graphql-api")
                         context.EnvironmentVariables["FILE_STORAGE__SERVER_URL"] = minio.GetEndpoint("s3");
                         context.EnvironmentVariables["FILE_STORAGE__ACCESS_KEY"] = env["MINIO:USER"];
                         context.EnvironmentVariables["FILE_STORAGE__SECRET_KEY"] = env["MINIO:PASSWORD"];
+                        context.EnvironmentVariables["FILE_STORAGE__BUCKET_NAME"] = env["MINIO:BUCKET_NAME"] ?? "ragivio";
                     })
                     .WithUrl("/scalar")
                     .WithUrl("/graphql");

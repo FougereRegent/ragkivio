@@ -13,15 +13,22 @@ public static class FileStorageConfiguration
     {
         public IServiceCollection AddFileStorage()
         {
-            serviceCollection.AddOptions<FileStorageOption>(FileStorageOption.CONFIGURATION_KEY);
+            serviceCollection.AddOptions<FileStorageOption>()
+                .BindConfiguration(FileStorageOption.CONFIGURATION_KEY)
+                .ValidateOnStart();
+            
             serviceCollection.AddSingleton<IAmazonS3>(serviceProvider =>
             {
                 var fileStorageOption = serviceProvider.GetRequiredService<IOptions<FileStorageOption>>()
                     .Value;
                 var config = new AmazonS3Config
                 {
+                    IgnoreConfiguredEndpointUrls = true,
                     ServiceURL = fileStorageOption.ServerUrl,
                     ForcePathStyle = true,
+                    AuthenticationRegion = "us-east-1",
+                    UseAccelerateEndpoint = false,
+                    Timeout = TimeSpan.FromSeconds(30),
                 };
 
                 return new AmazonS3Client(
