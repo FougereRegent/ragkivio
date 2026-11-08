@@ -10,7 +10,9 @@ public readonly record struct FileInputReferenceKey(
         string MimeType
 );
 
-public interface IFileStorage
+public interface IFileStorageService
 {
+    public Task SaveFileAsync(FileInputReferenceKey referenceKey, CancellationToken token);
 
+    public Task<Stream> GetFileAsync(FileReferenceKey referenceKey, CancellationToken token);
 }

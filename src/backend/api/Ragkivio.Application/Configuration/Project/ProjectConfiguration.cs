@@ -1,6 +1,7 @@
-namespace Ragkivio.Application.Project.Configuration;
+namespace Ragkivio.Application.Configuration.Project;
 
 using Microsoft.Extensions.DependencyInjection;
+using Ragkivio.Application.Project;
 using Ragkivio.Application.Project.Services;
 
 public static class ProjectConfiguration

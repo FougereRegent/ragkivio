@@ -2,7 +2,7 @@ namespace Ragkivio.Application.Configuration;
 
 using Microsoft.Extensions.DependencyInjection;
 using Ragkivio.Application.Configuration.User;
-using Ragkivio.Application.Project.Configuration;
+using Ragkivio.Application.Configuration.Project;
 
 public static class ApplicationConfiguration
 {
