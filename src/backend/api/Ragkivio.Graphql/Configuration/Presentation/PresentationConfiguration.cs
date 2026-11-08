@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
+using Ragkivio.Graphql.Options;
 using Ragkivio.Graphql.Types;
 
 namespace Ragkivio.Graphql.Configuration.Presentation;
@@ -14,11 +16,14 @@ public static class PresentationConfiguration
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer(options =>
-            {
-                options.Authority = "https://ragkivio.eu.auth0.com/";
-                options.Audience = "https://graphql-ragkivio.fr";
-            });
+            .AddJwtBearer();
+
+            services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
+                .Configure<IOptions<AuthOption>>((options, auth) =>
+                {
+                    options.Authority = auth.Value.Authority;
+                    options.Audience = auth.Value.Audience;
+                });
 
             services.AddCors(opts =>
             {

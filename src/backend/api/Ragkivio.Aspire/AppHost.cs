@@ -1,6 +1,32 @@
+using System.Reflection;
+using Microsoft.Extensions.Configuration;
+
 var builder = DistributedApplication.CreateBuilder(args);
 
-var env = builder.Configuration.GetSection("environmentVariables");
+// Charge explicitement les appsettings depuis le dossier du projet AppHost,
+// quel que soit le working directory (IDE, CLI, exécution directe du dll).
+var appHostDirectory = Assembly.GetEntryAssembly()
+    ?.GetCustomAttributes<AssemblyMetadataAttribute>()
+    .FirstOrDefault(attribute => attribute.Key == "apphostprojectpath")?.Value
+    ?? Directory.GetCurrentDirectory();
+
+builder.Configuration
+    .AddJsonFile(Path.Combine(appHostDirectory, "appsettings.json"), optional: true, reloadOnChange: true)
+    .AddJsonFile(Path.Combine(appHostDirectory, $"appsettings.{builder.Environment.EnvironmentName}.json"), optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables()
+    .AddCommandLine(args);
+
+var env = builder.Configuration;
+
+foreach (var requiredKey in new[] { "AUTH:AUTHORITY", "AUTH:AUDIENCE", "AUTH:AUTH_ID", "MINIO:USER", "MINIO:PASSWORD" })
+{
+    if (string.IsNullOrWhiteSpace(env[requiredKey]))
+    {
+        Console.WriteLine(
+            $"WARN: configuration '{requiredKey}' introuvable. " +
+            $"Environment={builder.Environment.EnvironmentName}, dossier={appHostDirectory}");
+    }
+}
 var postgres = builder.AddPostgres("postgres")
                         .WithImageTag("18")
                         .WithPgAdmin(configureContainer: opts =>
@@ -23,22 +49,23 @@ var minio = builder.AddContainer("minio", "chainguard/minio:latest")
                         "/data",
                         "--console-address",
                         ":9001")
-                    .WithEnvironment("MINIO_ROOT_USER", env["MINIO__USER"] ?? "minioadmin")
-                    .WithEnvironment("MINIO_ROOT_PASSWORD", env["MINIO__PASSWORD"] ?? "change-this-password")
-                    .WithVolume("minio-data", "/data")
-                    .WithHttpEndpoint(port: 9000, targetPort: 9000, name: "s3")
-                    .WithHttpEndpoint(port: 9001, targetPort: 9001, name: "console");
+                .WithEnvironment("MINIO_ROOT_USER", env["MINIO:USER"])
+                .WithEnvironment("MINIO_ROOT_PASSWORD", env["MINIO:PASSWORD"])
+                .WithVolume("minio-data", "/data")
+                .WithHttpEndpoint(port: 9000, targetPort: 9000, name: "s3")
+                .WithHttpEndpoint(port: 9001, targetPort: 9001, name: "console");
 
 
 var graphqlApi = builder.AddProject<Projects.Ragkivio_Graphql>("graphql-api")
                     .WithOtlpExporter()
                     .WaitFor(db)
                     .WaitFor(rabbitmq)
+                    .WaitFor(minio)
                     .WithReference(db)
                     .WithReference(rabbitmq)
-                    .WithEnvironment("RAGKIVIO_AUTHORITY", env["AUTH__AUTHORITY"])
-                    .WithEnvironment("RAGKIVIO_AUDIENCE", env["AUTH__AUDIENCE"])
-                    .WithEnvironment("RAGKIVIO_AUTH_ID", env["AUTH__AUTH_ID"])
+                    .WithEnvironment("AUTH__AUTHORITY", env["AUTH:AUTHORITY"])
+                    .WithEnvironment("AUTH__AUDIENCE", env["AUTH:AUDIENCE"])
+                    .WithEnvironment("AUTH__AUTH_ID", env["AUTH:AUTH_ID"])
                     .WithEnvironment(context =>
                     {
                         context.EnvironmentVariables["RABBIT_MQ__USER"] = rabbitmq.Resource.UserNameParameter!;
@@ -46,6 +73,9 @@ var graphqlApi = builder.AddProject<Projects.Ragkivio_Graphql>("graphql-api")
                         context.EnvironmentVariables["RABBIT_MQ__HOST"] = rabbitmq.Resource.PrimaryEndpoint.Property(EndpointProperty.Host);
                         context.EnvironmentVariables["RABBIT_MQ__PORT"] = rabbitmq.Resource.PrimaryEndpoint.Property(EndpointProperty.Port);
                         context.EnvironmentVariables["ConnectionStrings__ragkivio"] = db.Resource.ConnectionStringExpression;
+                        context.EnvironmentVariables["FILE_STORAGE__SERVER_URL"] = minio.GetEndpoint("s3");
+                        context.EnvironmentVariables["FILE_STORAGE__ACCESS_KEY"] = env["MINIO:USER"];
+                        context.EnvironmentVariables["FILE_STORAGE__SECRET_KEY"] = env["MINIO:PASSWORD"];
                     })
                     .WithUrl("/scalar")
                     .WithUrl("/graphql");

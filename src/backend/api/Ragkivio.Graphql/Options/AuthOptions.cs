@@ -1,12 +1,12 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace Ragkivio.Graphql.Options;
+
+using System.ComponentModel.DataAnnotations;
 
 public class AuthOption
 {
     public const string SectionName = "AUTH";
 
-    [Required, ConfigurationKeyName("AUTHORIRY")]
+    [Required, ConfigurationKeyName("AUTHORITY")]
     public string Authority { get; set; } = string.Empty;
 
     [Required, ConfigurationKeyName("AUDIENCE")]

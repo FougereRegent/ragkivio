@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Ragkivio.Graphql.Configuration;
+using Ragkivio.Infrastructure.Common;
 using Ragkivio.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,12 +10,18 @@ builder.Services
 
 var app = builder.Build();
 
+var cancellationTokenSource = new CancellationTokenSource();
+cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(30));
+
 if (ShouldRunMigration(app.Environment))
 {
-    var cancellationTokenSource = new CancellationTokenSource();
-    cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(30));
     await RunMigrationAsync(cancellationTokenSource.Token);
 }
+
+//await RunInitAsync(cancellationTokenSource.Token);
+
+cancellationTokenSource.Dispose();
+
 app.UseRouting();
 app.UseCors("AllowAllOrigin");
 app.UseAuthentication();
@@ -36,4 +43,12 @@ async Task RunMigrationAsync(CancellationToken cancellationToken = default)
 bool ShouldRunMigration(IWebHostEnvironment env)
 {
     return env.IsDevelopment();
+}
+
+async Task RunInitAsync(CancellationToken cancellationToken) 
+{
+    using var scope = app.Services.CreateScope();
+    var initServices = scope.ServiceProvider.GetRequiredKeyedService<IInit>(InitName.InitStorage);
+
+    await initServices.InitAsync(cancellationToken);
 }
