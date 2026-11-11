@@ -12,10 +12,14 @@ public class RagkivioContext : DbContext
 {
     internal const string TENANCY_QUERY_FILTER = "query-flter.tenancy";
     internal const string DELETE_QUERY_FILTER = "delete-flter.tenancy";
-        
+
     private readonly IUserProvider userProvider;
 
     internal DbSet<Persistence.User.User> Users { get; set; }
+
+    internal DbSet<Persistence.Document.Document> Documents { get; set; }
+
+    internal DbSet<Persistence.Project.Project> Projects { get; set; }
 
     internal Guid TenantId => userProvider?.UserId ?? Guid.Empty;
 
@@ -69,11 +73,11 @@ public class RagkivioContext : DbContext
                     .SetColumnName("deleted_at");
                 entity.FindProperty(nameof(Entity.IsDelete))?
                     .SetColumnName("is_delete");
-             
+
                 var parameter = Expression.Parameter(entity.ClrType, "e");
                 var propertyExpression = Expression.Property(parameter, nameof(Entity.IsDelete));
                 var isDeleteLambda = Expression.Lambda(Expression.Not(propertyExpression), parameter);
-                
+
                 entity.SetQueryFilter(DELETE_QUERY_FILTER, isDeleteLambda);
             }
 

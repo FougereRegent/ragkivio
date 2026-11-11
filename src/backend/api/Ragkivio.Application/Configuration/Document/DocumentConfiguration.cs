@@ -13,7 +13,6 @@ public static class DocumentConfiguration
         public IServiceCollection AddDocument()
         {
             serviceCollection
-                .AddTransient<IDomainEventHandler<CreateDocumentEvent>, StoreDocumentInFileStorageHandler>()
                 .AddTransient<CreateDocumentUseCase>();
             return serviceCollection;
         }

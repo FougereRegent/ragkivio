@@ -1,3 +1,4 @@
+using Ragkivio.Graphql.Types.Document;
 using Ragkivio.Graphql.Types.Project;
 using Ragkivio.Graphql.Types.User;
 
@@ -14,6 +15,7 @@ public class MutationType : ObjectType<Mutation>
         descriptor.RegisterUser()
             .CreateProject()
             .DeleteProject()
-            .UpdateProject();
+            .UpdateProject()
+            .CreateDocument();
     }
 }

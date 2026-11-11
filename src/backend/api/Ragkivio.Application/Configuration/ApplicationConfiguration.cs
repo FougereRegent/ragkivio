@@ -3,6 +3,7 @@ namespace Ragkivio.Application.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Ragkivio.Application.Configuration.User;
 using Ragkivio.Application.Configuration.Project;
+using Ragkivio.Application.Configuration.Application;
 
 public static class ApplicationConfiguration
 {
@@ -12,7 +13,8 @@ public static class ApplicationConfiguration
         {
             collection.AddCommon()
                 .AddUser()
-                .AddProject();
+                .AddProject()
+                .AddDocument();
 
             return collection;
         }
